@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'ui/screens/main_page.dart';
+import 'ui/main_page.dart';
 import 'theme/app_theme.dart';
-import 'ui/screens/career_guidance_tab.dart'; // Your Career Guidance Page
+import 'ui/tabs/career_guidance_tab.dart'; // Your Career Guidance Page
 import 'data/tabs_layout.dart';
 
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/tabs_layout.dart';
-import '../widgets/custom_tab_bar.dart';
+import 'widgets/custom_tab_bar.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
