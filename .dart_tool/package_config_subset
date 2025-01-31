@@ -42,6 +42,10 @@ flutter_sms
 2.12
 file:///Users/satyasreea/.pub-cache/hosted/pub.dev/flutter_sms-2.3.3/
 file:///Users/satyasreea/.pub-cache/hosted/pub.dev/flutter_sms-2.3.3/lib/
+font_awesome_flutter
+3.0
+file:///Users/satyasreea/.pub-cache/hosted/pub.dev/font_awesome_flutter-10.8.0/
+file:///Users/satyasreea/.pub-cache/hosted/pub.dev/font_awesome_flutter-10.8.0/lib/
 google_fonts
 2.14
 file:///Users/satyasreea/.pub-cache/hosted/pub.dev/google_fonts-6.2.1/
@@ -204,8 +208,8 @@ file:///Users/satyasreea/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0/
 file:///Users/satyasreea/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0/lib/
 the_basics
 3.7
-file:///Users/satyasreea/the_basics/
-file:///Users/satyasreea/the_basics/lib/
+file:///Users/satyasreea/FlutterApp/
+file:///Users/satyasreea/FlutterApp/lib/
 sky_engine
 3.7
 file:///opt/homebrew/Caskroom/flutter/3.27.1/flutter/bin/cache/pkg/sky_engine/

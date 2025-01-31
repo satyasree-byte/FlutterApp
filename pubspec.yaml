@@ -41,6 +41,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   google_fonts: ^6.2.1
+  font_awesome_flutter: ^10.7.0
   provider: ^6.0.4
   flutter_lints: ^5.0.0
   cupertino_icons: ^1.0.8
@@ -53,7 +54,17 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/career.png
+    - assets/images/Founder.jpeg
+    - assets/images/tip1.jpg
+    - assets/images/tip2.jpg
+    - assets/images/tip3.jpg
+    - assets/images/tip4.jpg
+    - assets/images/tip5.jpg
+    - assets/images/Academix.png
     - assets/fonts/FearRobot-Regular.ttf
+    - assets/images/Academ.png
+    - assets/images/Founder2.jpeg
+    - assets/images/Aca.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
