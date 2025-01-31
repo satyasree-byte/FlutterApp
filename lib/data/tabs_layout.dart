@@ -11,7 +11,7 @@ final List<String> tabTitles = [
 final List<Color> tabBackgroundColors = [
   Colors.purple.shade900,
   Colors.green.shade700,
-  Colors.yellow.shade900,
+  Colors.black,
   Colors.brown.shade700,
   Colors.blue.shade900,
   
@@ -20,7 +20,7 @@ final List<Color> tabBackgroundColors = [
 final List<Color> tabGradientColors = [
   Colors.pink,
   Colors.black,
-  Colors.pink,
+  Colors.purple.shade500,
   Colors.yellow.shade500,
   Colors.pinkAccent,
 ];

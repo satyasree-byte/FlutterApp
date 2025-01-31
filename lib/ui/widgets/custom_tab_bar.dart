@@ -15,14 +15,15 @@ class CustomTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      height: MediaQuery.of(context).size.height * 0.11,
       decoration: BoxDecoration(
-        color: Colors.black87,
+        color: Colors.black.withOpacity(0.1),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8,
+            color: Colors.black,
+            blurRadius: 3,
             offset: const Offset(0, -4),
           ),
         ],
@@ -36,7 +37,7 @@ class CustomTabBar extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 7),
               decoration: BoxDecoration(
                 color: isSelected ? Colors.pinkAccent : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
@@ -45,7 +46,7 @@ class CustomTabBar extends StatelessWidget {
                 tabs[index],
                 style: TextStyle(
                   color: isSelected ? Colors.white : Colors.white70,
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                 ),
               ),

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../data/tabs_layout.dart';
+import 'tabs/home_tab.dart';
+import 'tabs/career_guidance_tab.dart';
+import 'tabs/knowledge_centre_tab.dart';
+import 'tabs/about_tab.dart';
+import 'tabs/contact_us_tab.dart';
 import 'widgets/custom_tab_bar.dart';
+import '../data/tabs_layout.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -11,12 +16,21 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  bool _showImage = false; // Controls when the image fades in
+  bool _showImage = false;
+
+  // List of all tab contents
+  final List<Widget> _tabContents = [
+    const HomeTab(),
+    const KnowledgeCentreTab(),
+    const CareerGuidanceTab(),
+    const AboutTab(),
+    const ContactUsTab(),
+  ];
 
   void _onTabSelected(int index) {
     setState(() {
       _selectedIndex = index;
-      _showImage = false; // Ensure the image is hidden during the transition
+      _showImage = false;
 
       // Delay the image fade-in until the tab transition completes
       Future.delayed(const Duration(milliseconds: 700), () {
@@ -45,15 +59,15 @@ class _MainPageState extends State<MainPage> {
           Positioned.fill(
             child: AnimatedOpacity(
               opacity: _showImage ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 1000), // Smooth fade-in
-              child: Image.asset(
-                'assets/images/career.png',
-                fit: BoxFit.cover,
-              ),
+              duration: const Duration(milliseconds: 1000),
+              // child: Image.asset(
+              //   'assets/images/career.png',
+              //   fit: BoxFit.cover,
+              // ),
             ),
           ),
 
-          // Tab Content with Animated Transition
+          // IndexedStack to switch between different tab content with smooth animation
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 700),
             transitionBuilder: (child, animation) {
@@ -61,19 +75,19 @@ class _MainPageState extends State<MainPage> {
                 opacity: animation,
                 child: SlideTransition(
                   position: Tween<Offset>(
-                    begin: const Offset(0.2, 0),
+                    begin: const Offset(0.2, 0), // Slide from right to left
                     end: Offset.zero,
                   ).animate(animation),
                   child: child,
                 ),
               );
             },
-            child: _buildTabContent(_selectedIndex),
+            child: _tabContents[_selectedIndex], // Dynamic content based on selected tab
           ),
 
           // Custom Tab Bar
           Align(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.topCenter,
             child: CustomTabBar(
               tabs: tabTitles,
               selectedIndex: _selectedIndex,
@@ -84,59 +98,4 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
- 
-
-  Widget _buildTabContent(int index) {
-  return Container(
-    key: ValueKey<int>(index),
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: [
-          tabBackgroundColors[index],
-          tabGradientColors[index],
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-    ),
-    child: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Text Title
-          Text(
-            tabTitles[index],
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 15),
-          // Text Description
-          Text(
-            tabDescriptions[index],
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 18,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 30),
-          // Animated Image
-          AnimatedOpacity(
-            opacity: 1.0, // You can make this dynamic based on your animation
-            duration: const Duration(milliseconds: 1000), // Smooth fade-in
-            child: Image.asset(
-              'assets/images/career.png',
-              width: 200, // Set the width to control image size
-              height: 200, // Set the height to control image size
-              fit: BoxFit.cover, // Keeps the aspect ratio while covering space
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 }
