@@ -9,7 +9,7 @@ final List<String> tabTitles = [
 ];
 
 final List<Color> tabBackgroundColors = [
-  Colors.purple.shade900,
+  Colors.purple.shade900.withOpacity(0.8),
   Colors.green.shade700,
   Colors.black,
   Colors.brown.shade700,
@@ -18,7 +18,7 @@ final List<Color> tabBackgroundColors = [
 ];
 
 final List<Color> tabGradientColors = [
-  Colors.pink,
+  Colors.pink.withOpacity(0.1),
   Colors.black,
   Colors.purple.shade500,
   Colors.yellow.shade500,
