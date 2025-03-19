@@ -23,7 +23,7 @@ class _MainPageState extends State<MainPage> {
     const HomeTab(),
     const KnowledgeCentreTab(),
     const CareerGuidanceTab(),
-    const AboutTab(),
+    AboutTab(),
     const ContactUsTab(),
   ];
 
@@ -92,6 +92,7 @@ class _MainPageState extends State<MainPage> {
               tabs: tabTitles,
               selectedIndex: _selectedIndex,
               onTabSelected: _onTabSelected,
+              logoUrl: 'assets/images/3.png',
             ),
           ),
         ],
