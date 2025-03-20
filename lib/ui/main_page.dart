@@ -21,7 +21,6 @@ class _MainPageState extends State<MainPage> {
   // List of all tab contents
   final List<Widget> _tabContents = [
     const HomeTab(),
-    const KnowledgeCentreTab(),
     const CareerGuidanceTab(),
     AboutTab(),
     const ContactUsTab(),
