@@ -344,7 +344,14 @@ class _BookingFormState extends State<BookingForm> {
                           onPressed: isLoading ? null : sendEmail,
                           child: isLoading
                               ? CircularProgressIndicator(color: Colors.white)
-                              : Text("Connect with Us"),
+                              : Text(
+                                "Connect With Us",
+                                style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.black,  // Text color
+                                fontWeight: FontWeight.bold,  // Bold text
+                              ),
+                              ),
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(double.infinity, 70), // Full width button
                             backgroundColor: Colors.green,
