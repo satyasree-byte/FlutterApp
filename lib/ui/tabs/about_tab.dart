@@ -44,7 +44,7 @@ class AboutTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 55.0),
+                padding: const EdgeInsets.only(top: 90.0), // Adjust padding as needed
                 child: RichText(
                   text: TextSpan(
                     style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),

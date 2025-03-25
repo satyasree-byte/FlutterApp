@@ -1,5 +1,6 @@
 // lib/ui/tabs/contact/contact_info_card.dart
 import 'package:flutter/material.dart';
+import '../services/bookServiceForm.dart';
 
 class ContactInfoCard extends StatefulWidget {
   final String name;
@@ -78,7 +79,15 @@ class _ContactInfoCardState extends State<ContactInfoCard> {
           type: MaterialType.transparency,
           child: InkWell(
             borderRadius: BorderRadius.circular(15.0),
-            onTap: () {}, // Add functionality if needed
+            onTap: () {
+        // Navigate to the BookingForm page
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BookingForm(),
+                ),
+                );
+            }, // Add functionality if needed
             child: Padding(
               padding: EdgeInsets.all(widget.isDesktop ? 24.0 : 16.0),
               child: Column(

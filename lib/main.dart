@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Advanced UI Application',
+      title: 'EDUVISE.AI',
       theme: AppTheme.themeData,
       home: const MainPage(),
     );
