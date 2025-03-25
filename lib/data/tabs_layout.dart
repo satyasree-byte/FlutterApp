@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 final List<String> tabTitles = [
   "Home",
-  "Career Guidance",
   "About",
   "Contact Us",
 ];
