@@ -15,7 +15,7 @@ class DesktopAbout extends StatelessWidget {
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 90,
+          top: MediaQuery.of(context).padding.top + 140,
           left: 80,
           right: 80,
           bottom: 80,

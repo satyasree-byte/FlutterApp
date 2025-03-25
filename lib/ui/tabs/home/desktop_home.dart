@@ -23,7 +23,7 @@ class DesktopHome extends StatelessWidget {
           HeroSection(),
           Container(
             color: Colors.black.withOpacity(0.7),
-            height: MediaQuery.of(context).size.height * 0.12,
+            height: MediaQuery.of(context).size.height * 0.1,
             child: TabBar(
               controller: tabController,
               indicatorColor: Colors.white,
