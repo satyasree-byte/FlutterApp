@@ -7,18 +7,26 @@ import cors from 'cors';
 // Configure CORS for production and development
 const allowedOrigins = [
   'https://eduvise.ai',
-  'http://localhost:3000',
+  'http://localhost:*',
   'https://eduviseai.web.app'
 ];
 
 const corsHandler = cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+     // Allow requests with no origin (like mobile apps or curl requests)
+     if (!origin) return callback(null, true);
+    
+     // Allow all localhost and 127.0.0.1 ports
+     if (
+       origin.startsWith('http://localhost:') || 
+       origin.startsWith('http://127.0.0.1:') ||
+       allowedOrigins.includes(origin)
+     ) {
+       return callback(null, true);
+     }
+     
+     callback(new Error('Not allowed by CORS'));
+   },
   methods: ['POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type']
 });
@@ -63,27 +71,28 @@ export const sendEmail = onRequest(
         }
 
         // Validate required fields
-        const { name, email, message } = req.body;
-        if (!name?.trim() || !email?.trim() || !message?.trim()) {
+        const { name, phoneNumber, message } = req.body;
+        if (!name?.trim() || !phoneNumber?.trim() || !message?.trim()) {
           return res.status(400).json({ 
             error: 'Missing required fields',
-            requiredFields: ['name', 'email', 'message']
+            requiredFields: ['name', 'phoneNumber', 'message'],
+            optionalFields: ['email', 'category']
           });
         }
 
         // Extract optional fields
-        const phoneNumber = req.body.phoneNumber || 'Not provided';
+        const email = req.body.email || 'Not provided';
         const category = req.body.category || 'General Inquiry';
 
         // Send email
         await transporter.sendMail({
           from: `"${name}" <consultation@eduvise.ai>`,
           to: 'consultation@eduvise.ai',
-          replyTo: email,
+          replyTo: email !== 'Not provided' ? email : undefined, // Only set replyTo if email was provided
           subject: `New Contact Request: ${category}`,
           text: [
             `Name: ${name}`,
-            `Email: ${email}`,
+            `Email: ${email}`, // Will show "Not provided" if empty
             `Phone: ${phoneNumber}`,
             `Category: ${category}`,
             `Message:\n${message}`
