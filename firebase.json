@@ -1,0 +1,37 @@
+{
+  "functions": [
+    { 
+      "source": "functions",
+      "runtime": "nodejs20",
+      "predeploy": "npm --prefix functions install",
+      "codebase": "default",
+      "secrets": ["EMAIL_USER", "EMAIL_PASS"],
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/send-email",
+        "function": "sendEmail",
+        "region": "us-central1"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

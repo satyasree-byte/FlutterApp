@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "eduviseai",
+    "prodEduvise": "eduviseai"
+  },
+  "targets": {},
+  "etags": {}
+}

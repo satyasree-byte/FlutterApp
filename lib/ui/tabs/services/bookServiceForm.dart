@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import '../../../data/tabs_layout.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async'; // Added for TimeoutException
 import 'dart:convert';
 
 class BookingForm extends StatefulWidget {
@@ -14,66 +15,116 @@ class _BookingFormState extends State<BookingForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController requirementController = TextEditingController();
-  String userType = 'Select'; // Default value for dropdown
-  String phoneNumber = ''; // Store full phone number with country code
-  final _formKey = GlobalKey<FormState>(); // FormKey for validation
-  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'IN'); // Default country code (India)
+  String userType = 'Select';
+  String phoneNumber = '';
+  final _formKey = GlobalKey<FormState>();
+  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'IN');
 
-  bool isEmailSent = false; // Track if email is sent
-  bool isLoading = false; // Track loading state
+  bool isEmailSent = false;
+  bool isLoading = false;
+  String? apiError;
 
-  // Email validation regex
   bool isValidEmail(String email) {
+    if (email.isEmpty) return true;
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-  // Name validation regex (alphabets only, minimum 4 letters)
-  bool isValidName(String name) {
-    return RegExp(r'^[a-zA-Z]{4,}$').hasMatch(name);
-  }
-
-  // Phone number validation for India (10 digits)
   bool isValidPhoneNumber(String phone) {
     return RegExp(r'^[0-9]{10}$').hasMatch(phone);
   }
 
-  // Method to send email
   Future<void> sendEmail() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        isLoading = true; // Show loading indicator
+        isLoading = true;
+        apiError = null;
       });
 
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/send-email'), // Replace with your backend URL
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': nameController.text,
-          'email': emailController.text,
+      try {
+        final Map<String, dynamic> requestBody = {
+          'name': nameController.text.trim(),
           'phoneNumber': phoneNumber,
           'category': userType,
-          'message': requirementController.text,
-        }),
-      );
+          'message': requirementController.text.trim(),
+        };
 
-      setState(() {
-        isLoading = false; // Hide loading indicator
-      });
+        if (emailController.text.trim().isNotEmpty) {
+          requestBody['email'] = emailController.text.trim();
+        }
 
-      if (response.statusCode == 200) {
-        setState(() {
-          isEmailSent = true; // Show success message
-        });
+        final response = await http.post(
+          Uri.parse('https://eduvise.ai/api/send-email'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: jsonEncode(requestBody),
+        ).timeout(const Duration(seconds: 30));
 
-        // Hide the success message after 10 seconds
-        Future.delayed(Duration(seconds: 10), () {
+        if (response.statusCode == 200) {
           setState(() {
-            isEmailSent = false;
+            isEmailSent = true;
           });
+          
+          nameController.clear();
+          emailController.clear();
+          phoneController.clear();
+          requirementController.clear();
+          setState(() {
+            userType = 'Select';
+            _phoneNumber = PhoneNumber(isoCode: 'IN');
+          });
+
+          Future.delayed(const Duration(seconds: 10), () {
+            if (mounted) {
+              setState(() {
+                isEmailSent = false;
+              });
+            }
+          });
+        } else {
+          String errorMessage = 'Failed to send request (${response.statusCode})';
+          try {
+            final errorResponse = jsonDecode(response.body);
+            if (errorResponse.containsKey('message')) {
+              errorMessage = errorResponse['message'];
+            } else if (errorResponse.containsKey('error')) {
+              errorMessage = errorResponse['error'];
+            }
+          } catch (e) {
+            print('Error parsing error response: $e');
+          }
+          
+          setState(() {
+            apiError = errorMessage;
+          });
+        }
+      } on http.ClientException catch (e) {
+        setState(() {
+          apiError = 'Network error: ${e.message}';
         });
-      } else {
+      } on TimeoutException catch (_) {
+        setState(() {
+          apiError = 'Request timed out. Please try again.';
+        });
+      } catch (e) {
+        setState(() {
+          apiError = 'An unexpected error occurred: ${e.toString()}';
+        });
+      } finally {
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }
+
+      if (apiError != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send email. Please try again.')),
+          SnackBar(
+            content: Text(apiError!),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -82,309 +133,298 @@ class _BookingFormState extends State<BookingForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Book Consultation")),
+      appBar: AppBar(
+        title: const Text("Book Consultation"),
+        centerTitle: true,
+      ),
       body: Stack(
         children: [
           SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.9, // Responsive width
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                         tabBackgroundColors[1],
-                         tabGradientColors[1],  // Replace with your color
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black45,
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: double.infinity),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          tabBackgroundColors[1],
+                          tabGradientColors[1],
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
-                    ],
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Name TextFormField
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Name",
-                                style: TextStyle(color: Colors.white, fontSize: 16),
-                              ),
-                              SizedBox(height: 8),
-                              TextFormField(
-                                controller: nameController,
-                                decoration: InputDecoration(
-                                  hintText: "Enter Your Name",
-                                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.4)),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                style: TextStyle(color: Colors.black, fontSize: 16),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your name';
-                                  }
-                                  if (!isValidName(value)) {
-                                    return 'Name should contain only alphabets and be at least 4 letters long';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16),
-
-                        // Phone Number with Country Code
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Enter Phone Number",
-                                style: TextStyle(color: Colors.white, fontSize: 16),
-                              ),
-                              SizedBox(height: 8),
-                              InternationalPhoneNumberInput(
-                                onInputChanged: (PhoneNumber number) {
-                                  setState(() {
-                                    _phoneNumber = number;
-                                    phoneNumber = _phoneNumber.phoneNumber!;
-                                  });
-                                },
-                                selectorConfig: SelectorConfig(
-                                  selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                                  showFlags: true,
-                                ),
-                                selectorTextStyle: TextStyle(color: Colors.white),
-                                ignoreBlank: false,
-                                autoValidateMode: AutovalidateMode.onUserInteraction,
-                                initialValue: _phoneNumber,
-                                textFieldController: phoneController,
-                                formatInput: true,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your phone number';
-                                  }
-                                  // Remove non-numeric characters and validate
-                                  final cleanedValue = value.replaceAll(RegExp(r'[^0-9]'), '');
-                                  if (!isValidPhoneNumber(cleanedValue)) {
-                                    return 'Please enter a valid 10-digit phone number';
-                                  }
-                                  return null;
-                                },
-                                inputDecoration: InputDecoration(
-                                  labelStyle: TextStyle(color: Colors.white),
-                                  hintText: "Enter phone number",
-                                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(color: Colors.blueAccent),
-                                  ),
-                                ),
-                                textStyle: TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16),
-
-                        // Email TextFormField (Optional)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Enter Email (Optional)",
-                                style: TextStyle(color: Colors.white, fontSize: 16),
-                              ),
-                              SizedBox(height: 8),
-                              TextFormField(
-                                controller: emailController,
-                                decoration: InputDecoration(
-                                  hintText: "Email is optional, but it helps us assist you better.",
-                                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.4)),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                style: TextStyle(color: Colors.black, fontSize: 16),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return null;
-                                  }
-                                  if (!isValidEmail(value)) {
-                                    return 'Please enter a valid email';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16),
-
-                        // Specify Your Requirement TextFormField
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Specify Your Requirement",
-                                style: TextStyle(color: Colors.white, fontSize: 16),
-                              ),
-                              SizedBox(height: 8),
-                              TextFormField(
-                                controller: requirementController,
-                                maxLines: 3, // Allow multiple lines
-                                maxLength: 250, // Limit to 250 characters
-                                decoration: InputDecoration(
-                                  hintText: "Enter your requirement within one or two sentences so that we can assist you better!",
-                                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.4)),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                style: TextStyle(color: Colors.black, fontSize: 16),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your requirement';
-                                  }
-                                  if (value.split(' ').length > 50) {
-                                    return 'Requirement should not exceed 250 words';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 2),
-
-                        // Dropdown Button
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 1.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Who Are You?",
-                                style: TextStyle(color: Colors.white, fontSize: 16),
-                              ),
-                              SizedBox(height: 8),
-                              DropdownButtonFormField<String>(
-                                value: userType,
-                                decoration: InputDecoration(
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                items: ['Select', 'School Student','College Student', 'Working Professional']
-                                    .map((e) => DropdownMenuItem(value: e, child: Text(e, style: TextStyle(color: Colors.black, fontSize: 16))))
-                                    .toList(),
-                                onChanged: (val) {
-                                  setState(() {
-                                    userType = val!;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == 'Select') {
-                                    return 'Please select who you are';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-
-                        // Connect with Us Button
-                        ElevatedButton(
-                          onPressed: isLoading ? null : sendEmail,
-                          child: isLoading
-                              ? CircularProgressIndicator(color: Colors.white)
-                              : Text(
-                                "Connect With Us",
-                                style: TextStyle(
-                                fontSize: 25,
-                                color: Colors.black,  // Text color
-                                fontWeight: FontWeight.bold,  // Bold text
-                              ),
-                              ),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 70), // Full width button
-                            backgroundColor: Colors.green,
-                            textStyle: TextStyle(fontSize: 20),
-                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                          ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black45,
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
                         ),
                       ],
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildFormField(
+                            label: "Name",
+                            hintText: "Enter Your Name",
+                            controller: nameController,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildPhoneField(),
+                          const SizedBox(height: 16),
+                          _buildFormField(
+                            label: "Enter Email (Optional)",
+                            hintText: "Email is optional, but it helps us assist you better.",
+                            controller: emailController,
+                            validator: (value) {
+                              if (value != null && value.isNotEmpty && !isValidEmail(value)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildFormField(
+                            label: "Specify Your Requirement",
+                            hintText: "Enter your requirement within one or two sentences so that we can assist you better!",
+                            controller: requirementController,
+                            maxLines: 3,
+                            maxLength: 250,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your requirement';
+                              }
+                              if (value.split(' ').length > 50) {
+                                return 'Requirement should not exceed 50 words';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildUserTypeDropdown(),
+                          const SizedBox(height: 20),
+                          _buildSubmitButton(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-
-          // Green success bar at the top
           if (isEmailSent)
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16),
+              child: Material(
                 color: Colors.green,
-                child: Text(
-                  'Thank you, ${nameController.text}, we have received your request. We will connect with you within 24hrs.',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                  textAlign: TextAlign.center,
+                child: SafeArea(
+                  child: const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      'Thank you, we have received your request. We will connect with you within 24hrs.',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFormField({
+    required String label,
+    required String hintText,
+    required TextEditingController controller,
+    required String? Function(String?)? validator,
+    int maxLines = 1,
+    int? maxLength,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          maxLength: maxLength,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.black.withOpacity(0.4)),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black, fontSize: 16),
+          validator: validator,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Enter Phone Number",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        const SizedBox(height: 8),
+        InternationalPhoneNumberInput(
+          onInputChanged: (PhoneNumber number) {
+            setState(() {
+              _phoneNumber = number;
+              phoneNumber = _phoneNumber.phoneNumber ?? '';
+            });
+          },
+          selectorConfig: const SelectorConfig(
+            selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+            showFlags: true,
+            useEmoji: true,
+          ),
+          selectorTextStyle: const TextStyle(color: Colors.black),
+          ignoreBlank: false,
+          autoValidateMode: AutovalidateMode.onUserInteraction,
+          initialValue: _phoneNumber,
+          textFieldController: phoneController,
+          formatInput: true,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your phone number';
+            }
+            final cleanedValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+            if (!isValidPhoneNumber(cleanedValue)) {
+              return 'Please enter a valid 10-digit phone number';
+            }
+            return null;
+          },
+          inputDecoration: InputDecoration(
+            hintText: "Enter phone number",
+            hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+          ),
+          textStyle: const TextStyle(color: Colors.black),
+          keyboardType: TextInputType.phone,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserTypeDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Who Are You?",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: userType,
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+          ),
+          items: ['Select', 'School Student', 'College Student', 'Working Professional']
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e, style: const TextStyle(color: Colors.black, fontSize: 16)),
+                  ))
+              .toList(),
+          onChanged: (val) {
+            setState(() {
+              userType = val!;
+            });
+          },
+          validator: (value) {
+            if (value == 'Select') {
+              return 'Please select who you are';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 70,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : sendEmail,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        ),
+        child: isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Text(
+                "Connect With Us",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }

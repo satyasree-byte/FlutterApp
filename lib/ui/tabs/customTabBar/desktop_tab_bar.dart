@@ -40,7 +40,7 @@ class _DesktopTabBarState extends State<DesktopTabBar> {
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 32),
       height:90,
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.8),
+        color: Colors.black.withOpacity(1.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
