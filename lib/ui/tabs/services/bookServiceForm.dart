@@ -22,14 +22,10 @@ class _BookingFormState extends State<BookingForm> {
   bool isEmailSent = false; // Track if email is sent
   bool isLoading = false; // Track loading state
 
-  // Email validation regex
+  // Email validation regex (only validate if email is provided)
   bool isValidEmail(String email) {
+    if (email.isEmpty) return true;
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-  }
-
-  // Name validation regex (alphabets only, minimum 4 letters)
-  bool isValidName(String name) {
-    return RegExp(r'^[a-zA-Z]{4,}$').hasMatch(name);
   }
 
   // Phone number validation for India (10 digits)
@@ -45,11 +41,11 @@ class _BookingFormState extends State<BookingForm> {
       });
 
       final response = await http.post(
-        Uri.parse('http://localhost:3000/send-email'), // Replace with your backend URL
+        Uri.parse('https://eduvise.ai/api/send-email'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'name': nameController.text,
-          'email': emailController.text,
+          'email': emailController.text.isEmpty ? null : emailController.text,
           'phoneNumber': phoneNumber,
           'category': userType,
           'message': requirementController.text,
@@ -142,9 +138,6 @@ class _BookingFormState extends State<BookingForm> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your name';
-                                  }
-                                  if (!isValidName(value)) {
-                                    return 'Name should contain only alphabets and be at least 4 letters long';
                                   }
                                   return null;
                                 },

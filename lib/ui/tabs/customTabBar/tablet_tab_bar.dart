@@ -58,7 +58,7 @@ class _TabletTabBarState extends State<TabletTabBar> {
         horizontal: containerPadding,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.8),
+        color: Colors.black.withOpacity(0.9),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),

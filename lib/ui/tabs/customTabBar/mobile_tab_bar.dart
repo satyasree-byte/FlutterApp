@@ -27,7 +27,7 @@ class MobileTabBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withOpacity(0.9),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.8),
