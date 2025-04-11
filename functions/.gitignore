@@ -1,2 +1,10 @@
+# Flutter & Firebase
 node_modules/
 *.local
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+android/build/
+ios/Pods/
+ios/.symlinks/

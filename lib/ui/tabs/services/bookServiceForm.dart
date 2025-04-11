@@ -4,6 +4,8 @@ import '../../../data/tabs_layout.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async'; // Added for TimeoutException
 import 'dart:convert';
+import 'package:firebase_analytics/firebase_analytics.dart';
+final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
 class BookingForm extends StatefulWidget {
   @override
