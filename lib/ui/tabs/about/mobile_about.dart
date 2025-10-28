@@ -42,7 +42,7 @@ class MobileAbout extends StatelessWidget {
                   children: const [
                     TextSpan(text: 'Meet Our '),
                     TextSpan(
-                      text: 'Founders',
+                      text: 'Mentors',
                       style: TextStyle(color: Colors.black),
                     ),
                   ],

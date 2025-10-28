@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'ui/main_page.dart';
 import 'theme/app_theme.dart';
 import 'ui/tabs/career_guidance_tab.dart'; // Your Career Guidance Page

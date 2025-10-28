@@ -24,14 +24,14 @@ class Founder {
 final List<Founder> defaultFounders = [
   Founder(
     name: "Akash Kumar",
-    role: "Founder & CEO",
+    role: "Mentor",
     imageUrl: "assets/images/Founder.jpeg",
-    linkedinUrl: "https://www.linkedin.com/in/akash-kumar-silicon",
+    linkedinUrl: "https://www.linkedin.com/in/akash-kumar-silicon/",
     bio: "AI Engineer with 11+ years of experience in software engineering, AI, and quality assurance.",
   ),
   Founder(
     name: "Satya sree",
-    role: "Co-founder & CTO",
+    role: "Mentor",
     imageUrl: "assets/images/Founder2.jpeg",
     linkedinUrl: "https://www.linkedin.com/in/satyasree-annapragada/",
     bio: "Tech enthusiast with expertise in cloud computing, cybersecurity, and scalable architectures.",
@@ -42,12 +42,14 @@ class FounderCard extends StatefulWidget {
   final Founder founder;
   final bool isDesktop;
   final bool isTablet;
+  final bool isMobile;
   
   const FounderCard({
     Key? key, 
     required this.founder,
-    this.isDesktop = false,
-    this.isTablet = false,
+    this.isDesktop = true,
+    this.isTablet = true,
+    this.isMobile = true,
   }) : super(key: key);
 
   @override

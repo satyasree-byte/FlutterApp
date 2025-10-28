@@ -7,6 +7,8 @@ class DesktopTabBar extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onTabSelected;
   final String logoUrl;
+  final VoidCallback? onLogoTapped;
+  
 
   const DesktopTabBar({
     Key? key,
@@ -14,6 +16,7 @@ class DesktopTabBar extends StatefulWidget {
     required this.selectedIndex,
     required this.onTabSelected,
     required this.logoUrl,
+    this.onLogoTapped,
   }) : super(key: key);
 
   @override
@@ -53,11 +56,14 @@ class _DesktopTabBarState extends State<DesktopTabBar> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Logo
-          SvgPicture.asset(
+          GestureDetector(
+          onTap: widget.onLogoTapped ?? () {},
+          child: SvgPicture.asset(
             widget.logoUrl,
             width: logoSize,
             height: logoSize,
           ),
+        ),
 
           // Tabs with hover effect
           Expanded(

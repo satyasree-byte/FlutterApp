@@ -3,10 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EDUVISE.AI</title>
+  <title>EDUVISE.AI | Educational Advice & AI Learning Consultation</title>
+  <meta name="description" content="Eduvise.ai offers personalized educational advice and AI-powered career guidance. Book your consultation today to plan your academic or professional path with expert mentors.">
+  <meta name="keywords" content="educational advice, education consultation, AI learning, career guidance, eduvise, eduvise.ai, study planning, online learning, study abroad, education counselor">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://eduvise.ai/">
   <link rel="icon" href="favicon.png">
   <link rel="manifest" href="manifest.json">
 
+  <!-- Schema.org Structured Data for Educational Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "Eduvise.ai",
+    "url": "https://eduvise.ai",
+    "logo": "https://eduvise.ai/assets/logo.png",
+    "description": "Eduvise.ai offers educational advice, AI learning consultation, and career guidance for students and professionals.",
+    "sameAs": [
+      "https://www.linkedin.com/company/eduviseai",
+      "https://twitter.com/eduviseai"
+    ]
+  }
+  </script>
   <!-- New Flutter 3.29+ Initialization Pattern -->
   <script>
     // Minimal required configuration
@@ -23,6 +42,43 @@
 
   <!-- Loader Script (MUST come after config) -->
   <script src="flutter.js" defer></script>
+
+  <!-- Loading Screen Styles -->
+  <style>
+    #loading {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      color: #333;
+      text-align: center;
+    }
+
+    #loading img {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+
+    .spinner {
+      margin: 20px auto;
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top-color: #1d72b8; /* Primary color */
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loading p {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
   <script>
@@ -52,8 +108,11 @@
   </script>
 
   <!-- Loading Screen -->
-  <div id="loading">
-    Loading EDUVISE.AI...
+  <div id="loading" style="text-align:center; padding-top:100px;">
+    <img src="assets/images/4.svg" alt="Eduvise.ai Logo" width="200">
+    <p>Loading EDUVISE.AI...</p>
+    <div class="spinner"></div>
+    <p>Preparing your personalized educational advice...</p>
   </div>
 </body>
 </html>

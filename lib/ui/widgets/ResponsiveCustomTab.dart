@@ -12,6 +12,7 @@ class ResponsiveCustomTab extends StatelessWidget {
   final String logoUrl;
   final bool isMenuOpen;
   final VoidCallback toggleMenu;
+  final VoidCallback? onLogoTapped; 
 
   const ResponsiveCustomTab({
     Key? key,
@@ -21,6 +22,7 @@ class ResponsiveCustomTab extends StatelessWidget {
     required this.logoUrl,
     required this.isMenuOpen,
     required this.toggleMenu,
+    this.onLogoTapped,
   }) : super(key: key);
 
   @override
@@ -49,6 +51,7 @@ class ResponsiveCustomTab extends StatelessWidget {
         selectedIndex: selectedIndex,
         onTabSelected: onTabSelected,
         logoUrl: logoUrl,
+        onLogoTapped: onLogoTapped, 
       );
     }
   }

@@ -110,6 +110,9 @@ class _MainPageState extends State<MainPage> {
                 logoUrl: 'assets/images/4.svg',
                 isMenuOpen: _isMenuOpen,
                 toggleMenu: _toggleMenu,
+                onLogoTapped: () {
+                  _onTabSelected(0); // Navigate to home tab
+                },
               ),
             ),
           ),
