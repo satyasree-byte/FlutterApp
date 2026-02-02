@@ -1,20 +1,21 @@
 {
-  "functions": [
-    { 
-      "source": "functions",
-      "runtime": "nodejs20",
-      "predeploy": "npm --prefix functions install",
-      "codebase": "default",
-      "secrets": ["EMAIL_USER", "EMAIL_PASS"],
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ]
-    }
-  ],
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20",
+    "predeploy": "npm --prefix functions install",
+    "codebase": "default",
+    "secrets": [
+      "EMAIL_USER",
+      "EMAIL_PASS"
+    ],
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "*.local"
+    ]
+  },
   "hosting": {
     "public": "build/web",
     "ignore": [
@@ -22,16 +23,58 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "headers": [
+      {
+        "source": "/sitemap.xml",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/xml"
+          }
+        ]
+      },
+      {
+        "source": "/robots.txt",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "text/plain"
+          }
+        ]
+      }
+    ],
     "rewrites": [
       {
-        "source": "/api/send-email",
-        "function": "sendEmail",
-        "region": "us-central1"
+        "source": "/saveBooking",
+        "function": "saveBooking"
+      },
+      {
+        "source": "/sendEmail",
+        "function": "sendEmail"
+      },
+      {
+        "source": "/getBooking",
+        "function": "getBooking"
       },
       {
         "source": "**",
         "destination": "/index.html"
       }
     ]
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }

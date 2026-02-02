@@ -45,7 +45,7 @@ class MobileContact extends StatelessWidget {
                         ContactInfoCard(
                           name: 'ADMIN',
                           phone: '+91 8884741673',
-                          email: 'consultation@eduvise.ai',
+                          email: 'consulting@eduvise.ai',
                           isMobile: true,
                         ),
                         const SizedBox(height: 20),

@@ -31,11 +31,21 @@ dependencies:
   flutter:
     sdk: flutter
 
+  js: ^0.6.7
+  # WhatsApp Integration
+  url_launcher: ^6.1.0  # For opening WhatsApp links
+  # Firebase (if using)
+  firebase_core: ^2.24.2
+  cloud_firestore: ^4.15.1
+  # Form handling
 
+  # HTTP for API calls
+  http: ^1.1.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_sms: ^2.3.3
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -47,11 +57,13 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   cupertino_icons: ^1.0.8
   url_launcher: ^6.1.8
-  razorpay_flutter: ^1.2.6
+  # razorpay_flutter: ^1.2.6
   flutter_webview_plugin: ^0.4.0
   intl_phone_number_input: ^0.7.4
   libphonenumber_web: ^0.3.2
+  http: ^1.1.0
   libphonenumber_plugin: ^0.3.3
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

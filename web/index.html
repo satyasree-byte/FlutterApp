@@ -26,22 +26,9 @@
     ]
   }
   </script>
-  <!-- New Flutter 3.29+ Initialization Pattern -->
-  <script>
-    // Minimal required configuration
-    window.flutterConfiguration = {
-     assetBase: "/",// No trailing slash
-      assets: ["assets/images"], 
-      appId: 'eduvise_ai',
-      entrypoint: 'main.dart.js',
-      buildConfig: {
-        // Will be merged with Flutter's generated config
-      }
-    };
-  </script>
 
-  <!-- Loader Script (MUST come after config) -->
-  <script src="flutter.js" defer></script>
+  <!-- Razorpay Script -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <!-- Loading Screen Styles -->
   <style>
@@ -54,6 +41,13 @@
       font-family: Arial, sans-serif;
       color: #333;
       text-align: center;
+      background: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
     }
 
     #loading img {
@@ -66,7 +60,7 @@
       width: 40px;
       height: 40px;
       border: 5px solid #ccc;
-      border-top-color: #1d72b8; /* Primary color */
+      border-top-color: #1d72b8;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -78,41 +72,103 @@
     #loading p {
       margin: 5px 0;
     }
+
+    /* Hide loading when Flutter loads */
+    .flutter-loaded #loading {
+      display: none;
+    }
   </style>
+
+  <!-- Flutter Web Script -->
+  <script src="flutter.js" defer></script>
 </head>
 <body>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      if ('serviceWorker' in navigator) {
-        // Let Flutter handle service worker registration
-        navigator.serviceWorker.register('flutter_service_worker.js')
-          .catch(console.error);
-      }
-
-      // Modern initialization (Flutter 3.29+)
-      _flutter.loader
-        .loadEntrypoint({
-          onEntrypointLoaded: async (engineInitializer) => {
-            try {
-              const appRunner = await engineInitializer.initializeEngine();
-              await appRunner.runApp();
-              document.getElementById('loading').style.display = 'none';
-            } catch (error) {
-              console.error('Flutter initialization failed:', error);
-              document.getElementById('loading').innerHTML = 
-                '<p>Application failed to load. Please refresh.</p>';
-            }
-          }
-        });
-    });
-  </script>
-
   <!-- Loading Screen -->
-  <div id="loading" style="text-align:center; padding-top:100px;">
+  <div id="loading">
     <img src="assets/images/4.svg" alt="Eduvise.ai Logo" width="200">
     <p>Loading EDUVISE.AI...</p>
     <div class="spinner"></div>
     <p>Preparing your personalized educational advice...</p>
   </div>
+
+  <!-- SEO Fallback Content -->
+  <noscript>
+    <div style="padding: 20px; text-align: center;">
+      <h1>Eduvise.ai - AI Powered Educational & Career Guidance</h1>
+      <p>Get expert education consultation and personalized career guidance powered by AI. Eduvise.ai helps students and professionals make smarter academic and career choices.</p>
+      <p>Please enable JavaScript to use our application, or visit our main website.</p>
+    </div>
+  </noscript>
+
+  <!-- Hidden SEO Content -->
+  <div id="seo-content" style="display:none;">
+    <h1>Eduvise.ai - AI Powered Educational & Career Guidance</h1>
+    <p>Get expert education consultation and personalized career guidance powered by AI. Eduvise.ai helps students and professionals make smarter academic and career choices.</p>
+    <ul>
+      <li>AI powered counseling</li>
+      <li>Online learning recommendations</li>
+      <li>Career change guidance</li>
+      <li>University and course selection</li>
+    </ul>
+  </div>
+
+  <script>
+    // Simple Flutter initialization - FIXED VERSION
+    window.addEventListener('load', function(ev) {
+      console.log('Page loaded, initializing Flutter...');
+      
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        // Remove serviceWorker configuration to fix the error
+        onEntrypointLoaded: async function(engineInitializer) {
+          try {
+            console.log('Flutter entrypoint loaded, initializing engine...');
+            
+            // Initialize the Flutter engine
+            const appRunner = await engineInitializer.initializeEngine();
+            
+            console.log('Flutter engine initialized, running app...');
+            
+            // Run the app
+            await appRunner.runApp();
+            
+            // Hide loading screen
+            document.getElementById('loading').style.display = 'none';
+            document.body.classList.add('flutter-loaded');
+            
+            console.log('Flutter app started successfully');
+            
+          } catch (error) {
+            console.error('Flutter initialization failed:', error);
+            document.getElementById('loading').innerHTML = 
+              '<p>Application failed to load. Please refresh the page.</p>' +
+              '<button onclick="window.location.reload()" style="padding: 10px 20px; margin-top: 20px;">Retry</button>';
+          }
+        }
+      });
+    });
+
+    // Check if Razorpay loaded successfully
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if (typeof Razorpay === 'undefined') {
+          console.warn('Razorpay script not loaded. Payment features may not work.');
+        } else {
+          console.log('Razorpay loaded successfully');
+        }
+      }, 1000);
+    });
+
+    // Fallback: Hide loading after timeout (in case Flutter fails silently)
+    setTimeout(function() {
+      const loading = document.getElementById('loading');
+      if (loading && loading.style.display !== 'none') {
+        console.warn('Flutter loading timeout - showing retry button');
+        loading.innerHTML = 
+          '<p>Taking longer than expected...</p>' +
+          '<button onclick="window.location.reload()" style="padding: 10px 20px; margin-top: 20px;">Retry Loading</button>';
+      }
+    }, 10000); // 10 second timeout
+  </script>
 </body>
 </html>
