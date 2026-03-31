@@ -27,25 +27,15 @@ class _ContactInfoCardState extends State<ContactInfoCard> {
 
   @override
   Widget build(BuildContext context) {
-    final double cardWidth = widget.isMobile 
-        ? MediaQuery.of(context).size.width * 0.8 
-        : widget.isDesktop 
-            ? 350.0 
-            : 300.0;
-
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        width: cardWidth,
-        constraints: BoxConstraints(
-          minHeight: widget.isMobile ? 160.0 : 180.0,
-          maxHeight: widget.isDesktop ? 220.0 : 200.0,
-        ),
+        width: widget.isDesktop ? 350.0 : widget.isMobile ? double.infinity : 300.0,
         margin: EdgeInsets.symmetric(
-          horizontal: widget.isMobile ? 0.0 : 20.0,
-          vertical: 10.0,
+          horizontal: widget.isMobile ? 24.0 : 20.0,
+          vertical: 8.0,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),

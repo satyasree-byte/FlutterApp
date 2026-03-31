@@ -9,6 +9,7 @@ class TabletTabBar extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onTabSelected;
   final String logoUrl;
+  final VoidCallback? onLogoTapped;
 
   const TabletTabBar({
     Key? key,
@@ -16,6 +17,7 @@ class TabletTabBar extends StatefulWidget {
     required this.selectedIndex,
     required this.onTabSelected,
     required this.logoUrl,
+    this.onLogoTapped,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,8 @@ class TabletTabBar extends StatefulWidget {
 
 class _TabletTabBarState extends State<TabletTabBar> {
   List<bool> _isHovered = [];
+  bool _isLogoHovered = false;
+  bool _isLogoPressed = false;
 
   @override
   void initState() {
@@ -70,13 +74,46 @@ class _TabletTabBarState extends State<TabletTabBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo with constrained size
-          SizedBox(
-            width: logoSize,
-            height: logoSize,
-            child: SvgPicture.asset(
-              widget.logoUrl,
-              fit: BoxFit.contain,
+          // Logo with hover + press interaction
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            onEnter: (_) => setState(() => _isLogoHovered = true),
+            onExit: (_) => setState(() {
+              _isLogoHovered = false;
+              _isLogoPressed = false;
+            }),
+            child: GestureDetector(
+              onTap: widget.onLogoTapped,
+              onTapDown: (_) => setState(() => _isLogoPressed = true),
+              onTapUp: (_) => setState(() => _isLogoPressed = false),
+              onTapCancel: () => setState(() => _isLogoPressed = false),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOut,
+                transform: Matrix4.identity()
+                  ..scale(_isLogoPressed ? 0.88 : (_isLogoHovered ? 1.08 : 1.0)),
+                transformAlignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: _isLogoHovered && !_isLogoPressed
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFF64FFDA).withOpacity(0.45),
+                            blurRadius: 20,
+                            spreadRadius: 3,
+                          ),
+                        ]
+                      : [],
+                ),
+                child: SizedBox(
+                  width: logoSize,
+                  height: logoSize,
+                  child: SvgPicture.asset(
+                    widget.logoUrl,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
             ),
           ),
 

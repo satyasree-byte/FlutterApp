@@ -161,12 +161,13 @@ class _FounderCardState extends State<FounderCard> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
-             IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.linkedin, // Use FontAwesome LinkedIn icon
-                color: Colors.blueAccent,
+            GestureDetector(
+              onTap: () => _launchURL(widget.founder.linkedinUrl),
+              child: FaIcon(
+                FontAwesomeIcons.linkedin,
+                color: Colors.blue[300],
+                size: 30,
               ),
-              onPressed: () => _launchURL(widget.founder.linkedinUrl),
             ),
           ],
         ),

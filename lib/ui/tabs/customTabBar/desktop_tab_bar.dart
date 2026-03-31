@@ -25,6 +25,8 @@ class DesktopTabBar extends StatefulWidget {
 
 class _DesktopTabBarState extends State<DesktopTabBar> {
   List<bool> _isHovered = [];
+  bool _isLogoHovered = false;
+  bool _isLogoPressed = false;
 
   @override
   void initState() {
@@ -55,15 +57,60 @@ class _DesktopTabBarState extends State<DesktopTabBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo
-          GestureDetector(
-          onTap: widget.onLogoTapped ?? () {},
-          child: SvgPicture.asset(
-            widget.logoUrl,
-            width: logoSize,
-            height: logoSize,
+          // Logo with hover glow + scale + tooltip
+          Tooltip(
+            message: 'EDUVISE.AI',
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0A1628),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFF64FFDA).withOpacity(0.4)),
+            ),
+            verticalOffset: 20,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              onEnter: (_) => setState(() => _isLogoHovered = true),
+              onExit: (_) => setState(() {
+                _isLogoHovered = false;
+                _isLogoPressed = false;
+              }),
+              child: GestureDetector(
+                onTap: widget.onLogoTapped ?? () {},
+                onTapDown: (_) => setState(() => _isLogoPressed = true),
+                onTapUp: (_) => setState(() => _isLogoPressed = false),
+                onTapCancel: () => setState(() => _isLogoPressed = false),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOut,
+                  transform: Matrix4.identity()
+                    ..scale(_isLogoPressed ? 0.88 : (_isLogoHovered ? 1.10 : 1.0)),
+                  transformAlignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: _isLogoHovered && !_isLogoPressed
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF64FFDA).withOpacity(0.5),
+                              blurRadius: 24,
+                              spreadRadius: 4,
+                            ),
+                          ]
+                        : [],
+                  ),
+                  child: SvgPicture.asset(
+                    widget.logoUrl,
+                    width: logoSize,
+                    height: logoSize,
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
 
           // Tabs with hover effect
           Expanded(

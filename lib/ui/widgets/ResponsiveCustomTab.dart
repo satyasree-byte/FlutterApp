@@ -37,6 +37,7 @@ class ResponsiveCustomTab extends StatelessWidget {
         logoUrl: logoUrl,
         isMenuOpen: isMenuOpen,
         toggleMenu: toggleMenu,
+        onLogoTapped: onLogoTapped,
       );
     } else if (screenWidth < ScreenSize.tablet) {
       return TabletTabBar(
@@ -44,6 +45,7 @@ class ResponsiveCustomTab extends StatelessWidget {
         selectedIndex: selectedIndex,
         onTabSelected: onTabSelected,
         logoUrl: logoUrl,
+        onLogoTapped: onLogoTapped,
       );
     } else {
       return DesktopTabBar(

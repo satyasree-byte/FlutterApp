@@ -21,47 +21,39 @@ class MobileContact extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 120),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                const Text(
-                  'Contact Us',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 30),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        ContactInfoCard(
-                          name: 'ADMIN',
-                          phone: '+91 8884741673',
-                          email: 'consulting@eduvise.ai',
-                          isMobile: true,
-                        ),
-                        const SizedBox(height: 20),
-                        ContactInfoCard(
-                          name: 'OFFICE',
-                          phone: '+91 8050003203',
-                          email: 'support@eduvise.ai',
-                          isMobile: true,
-                        ),
-                        const SizedBox(height: 20), // Bottom padding
-                      ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Contact Us',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: constraints.maxWidth < 360 ? 22 : 26,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
-            ),
+                  SizedBox(height: constraints.maxHeight * 0.04),
+                  ContactInfoCard(
+                    name: 'ADMIN',
+                    phone: '+91 8050003203',
+                    email: 'consulting@eduvise.ai',
+                    isMobile: true,
+                  ),
+                  SizedBox(height: constraints.maxHeight * 0.03),
+                  ContactInfoCard(
+                    name: 'OFFICE',
+                    phone: '+91 9743997135',
+                    email: 'support@eduvise.ai',
+                    isMobile: true,
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

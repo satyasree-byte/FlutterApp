@@ -429,12 +429,14 @@ _This is an automated booking request from the website form._
           height: 60,
           child: ElevatedButton.icon(
             onPressed: isWhatsAppLoading ? null : _handleWhatsAppBooking,
-            icon: Image.asset(
-              'assets/images/whatsapp.jpg',
-              width: 24,
-              height: 24,
-              color: Colors.white,
-              colorBlendMode: BlendMode.srcIn,
+            icon: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.asset(
+                'assets/images/whatsapp.jpg',
+                width: 24,
+                height: 24,
+                fit: BoxFit.cover,
+              ),
             ),
             label: isWhatsAppLoading 
                 ? CircularProgressIndicator(color: Colors.white)
@@ -457,7 +459,12 @@ _This is an automated booking request from the website form._
           height: 60,
           child: ElevatedButton.icon(
             onPressed: isLoading ? null : _handleEmailBooking,
-            icon: Icon(Icons.email, color: Colors.white),
+            icon: Image.asset(
+              'assets/images/gmail.png',
+              width: 24,
+              height: 24,
+              fit: BoxFit.contain,
+            ),
             label: isLoading
                 ? CircularProgressIndicator(color: Colors.white)
                 : Text(
@@ -640,44 +647,52 @@ _This is an automated booking request from the website form._
       children: [
         const Text("Enter Phone Number", style: TextStyle(color: Colors.white, fontSize: 16)),
         const SizedBox(height: 8),
-        InternationalPhoneNumberInput(
-          onInputChanged: (PhoneNumber number) {
-            setState(() {
-              _phoneNumber = number;
-              phoneNumber = _phoneNumber.phoneNumber ?? '';
-            });
-          },
-          selectorConfig: const SelectorConfig(
-            selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-            showFlags: true,
-            useEmoji: true,
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
           ),
-          selectorTextStyle: const TextStyle(color: Colors.black),
-          ignoreBlank: false,
-          autoValidateMode: AutovalidateMode.onUserInteraction,
-          initialValue: _phoneNumber,
-          textFieldController: phoneController,
-          formatInput: true,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your phone number';
-            }
-            final cleanedValue = value.replaceAll(RegExp(r'[^0-9]'), '');
-            if (cleanedValue.length != 10) {
-              return 'Please enter a valid 10-digit phone number';
-            }
-            return null;
-          },
-          inputDecoration: InputDecoration(
-            hintText: "Enter phone number",
-            hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
-            fillColor: Colors.white,
-            filled: true,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Colors.red)),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: InternationalPhoneNumberInput(
+            onInputChanged: (PhoneNumber number) {
+              setState(() {
+                _phoneNumber = number;
+                phoneNumber = _phoneNumber.phoneNumber ?? '';
+              });
+            },
+            selectorConfig: const SelectorConfig(
+              selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+              showFlags: true,
+              useEmoji: true,
+            ),
+            selectorTextStyle: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+            ignoreBlank: false,
+            autoValidateMode: AutovalidateMode.onUserInteraction,
+            initialValue: _phoneNumber,
+            textFieldController: phoneController,
+            formatInput: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your phone number';
+              }
+              final cleanedValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+              if (cleanedValue.length != 10) {
+                return 'Please enter a valid 10-digit phone number';
+              }
+              return null;
+            },
+            inputDecoration: InputDecoration(
+              hintText: "Enter phone number",
+              hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+              fillColor: Colors.transparent,
+              filled: true,
+              border: const OutlineInputBorder(borderSide: BorderSide.none),
+              errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 1, vertical: 12),
+            ),
+            textStyle: const TextStyle(color: Colors.black, fontSize: 16),
+            keyboardType: TextInputType.phone,
           ),
-          textStyle: const TextStyle(color: Colors.black),
-          keyboardType: TextInputType.phone,
         ),
       ],
     );
