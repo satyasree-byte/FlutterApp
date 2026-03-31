@@ -7,10 +7,10 @@ import 'data/tabs_layout.dart';
 
 
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(const Duration(milliseconds: 500)); // Delay to allow initialization
-  runApp(MyApp());
+  setUrlStrategy(PathUrlStrategy()); // <-- Add this line
+  runApp(const MyApp());
 }
 
 

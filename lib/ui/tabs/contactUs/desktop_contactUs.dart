@@ -44,7 +44,7 @@ class DesktopContact extends StatelessWidget {
                     height: 250,
                     child: ContactInfoCard(
                       name: 'ADMIN',
-                      phone: '+91 8884741673',
+                      phone: '+91 8050003203',
                       email: 'consulting@eduvise.ai',
                       isDesktop: true,
                     ),
@@ -55,7 +55,7 @@ class DesktopContact extends StatelessWidget {
                     height: 250,
                     child: ContactInfoCard(
                       name: 'OFFICE',
-                      phone: '+91 8050003203',
+                      phone: '+91 9743997135',
                       email: 'support@eduvise.ai',
                       isDesktop: true,
                     ),

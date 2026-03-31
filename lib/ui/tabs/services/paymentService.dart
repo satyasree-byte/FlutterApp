@@ -231,19 +231,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 ),
               ),
             ),
-            
-            SizedBox(height: 20),
-            
-            // Test Mode Information
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.orange[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.orange),
-              ),
-    
-            ),
+          
             SizedBox(height: 10),
             Text(
               "🔒 Secure payment powered by Razorpay",

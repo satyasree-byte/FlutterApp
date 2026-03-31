@@ -21,29 +21,34 @@ class MobileHome extends StatelessWidget {
         children: [
           HeroSection(),
           Container(
-            color: Colors.black.withOpacity(0.7),
-            height: MediaQuery.of(context).size.height * 0.08,
-            child: Center(
+            color: Colors.black.withOpacity(0.75),
+            height: MediaQuery.of(context).size.height * 0.07,
+            child: Align(
+            alignment: Alignment.centerLeft,
             child: TabBar(
               controller: tabController,
-              indicatorColor: Colors.green,
-              labelColor: Colors.green,
-              unselectedLabelColor: Colors.white,
+              indicatorColor: const Color(0xFF64FFDA),
+              indicatorWeight: 3,
+              labelColor: const Color(0xFF64FFDA),
+              unselectedLabelColor: Colors.white70,
+              dividerColor: Colors.transparent,
               labelStyle: TextStyle(
-                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 18),
+                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 15),
                 fontWeight: FontWeight.bold,
+                letterSpacing: 0.4,
               ),
               unselectedLabelStyle: TextStyle(
-                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
-                fontWeight: FontWeight.normal,
+                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 14),
+                fontWeight: FontWeight.w500,
               ),
               isScrollable: true,
-              
+              tabAlignment: TabAlignment.start,
+              padding: const EdgeInsets.only(left: 8),
               tabs: [
                 Tab(text: 'High School'),
                 Tab(text: 'University'),
                 Tab(text: 'AI & ML'),
-                Tab(text: 'QA Coaching'),
+                Tab(text: 'QA'),
               ],
               onTap: (index) => scrollToIndex(index),
             ),
@@ -53,51 +58,38 @@ class MobileHome extends StatelessWidget {
             children: [
               _buildZigZagCard(
                 'High School Pathway Guidance (Grades 8-12)',
-                """
-                How to use Artificial Intetelligence (AI) to improve your grades.
-                Personalized help to choose the best career path after school.
-                One-on-one programming lessons tailored to your child's needs.
-                Clear explanations of tough topics in the syllabus.
-                Quick doubt-solving to keep your child on track.
-                Exam preparation plans to help your child do well.
-                """,
+                """AI-powered grade improvement.
+                Career path clarity after school.
+                Exam strategy & doubt solving.""",
                 true,
-                Colors.purple,
+                Colors.tealAccent,
                 key: serviceKeys[0],
               ),
               _buildZigZagCard(
                 'University & College Advisory',
-                """
-                Personalized resume building.
-                College project reviews to help land IT jobs.
-                Mock interviews for freshers.
-                Communication skills and presentation skills coaching.
-                """,
+                """Job-ready resume building.
+                Real project reviews for IT roles.
+                Mock interviews & communication coaching.""",
                 true,
-                Colors.purple,
+                Colors.amberAccent,
                 key: serviceKeys[1],
               ),
               _buildZigZagCard(
                 'AI & Machine Learning Career Roadmap',
-                """Real-time project discussions to gain industry experience.
-                Personalized resume review.
-                Mock interviews to build confidence.
-                Discussions on the latest tools and technologies in Data Science and Gen AI.
-                """,
+                """Hands-on GenAI & Data Science projects.
+                Resume review + mock interviews.
+                Latest tools: LLMs, MLOps & more.""",
                 true,
-                Colors.purple,
+                Colors.cyanAccent,
                 key: serviceKeys[2],
               ),
               _buildZigZagCard(
                 'Quality Assurance Career Coaching',
-                """Advanced QA tools from scratch.
-                Personalized resume reviews.
-                Technologies to consider in QA.
-                Mock interview coaching.
-                Real-time project discussions in QA.
-                """,
+                """QA automation tools from scratch.
+                Resume review & mock interviews.
+                Real-time QA project experience.""",
                 true,
-                Colors.purple,
+                Colors.greenAccent,
                 key: serviceKeys[3],
               ),
             ],
@@ -110,32 +102,12 @@ class MobileHome extends StatelessWidget {
   Widget _buildZigZagCard(String title, String content, bool isLeftAligned, Color titleColor, {Key? key}) {
     return Padding(
       key: key,
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: isLeftAligned ? MainAxisAlignment.start : MainAxisAlignment.end,
-        children: [
-          if (isLeftAligned) ...[
-            Expanded(
-              child: ServiceCard(
-                title: title,
-                content: content,
-                isLeftAligned: isLeftAligned,
-                titleColor: titleColor,
-              ),
-            ),
-            SizedBox(width: 16),
-          ] else ...[
-            SizedBox(width: 16),
-            Expanded(
-              child: ServiceCard(
-                title: title,
-                content: content,
-                isLeftAligned: isLeftAligned,
-                titleColor: titleColor,
-              ),
-            ),
-          ],
-        ],
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: ServiceCard(
+        title: title,
+        content: content,
+        isLeftAligned: isLeftAligned,
+        titleColor: titleColor,
       ),
     );
   }
@@ -176,21 +148,63 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: ResponsiveHelper.getResponsiveImageSize(context, 250),
+      height: ResponsiveHelper.getResponsiveImageSize(context, 240),
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
           return Transform.translate(
-            offset: _animation.value * 250,
+            offset: _animation.value * 240,
             child: Center(
-              child: Text(
-                'Shape Your Future with Expert Guidance',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.getResponsiveFontSize(context, 24),
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  backgroundColor: Colors.black.withOpacity(0.1),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.65),
+                      const Color(0xFF0A2818).withOpacity(0.75),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color(0xFF64FFDA).withOpacity(0.25),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Shape Your Future',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: ResponsiveHelper.getResponsiveFontSize(context, 26),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: const Color(0xFF64FFDA).withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'with Expert Guidance',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: ResponsiveHelper.getResponsiveFontSize(context, 18),
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF64FFDA),
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -233,17 +247,17 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
     super.initState();
     
     if (widget.title.contains('High School')) {
-      _wordToFlicker = 'Artificial Intetelligence (AI)';
-      _flickerColor = Colors.white;
+      _wordToFlicker = 'AI-powered';
+      _flickerColor = Colors.tealAccent;
     } else if (widget.title.contains('University')) {
-      _wordToFlicker = 'Personalized';
-      _flickerColor = Colors.white;
+      _wordToFlicker = 'Job-ready';
+      _flickerColor = Colors.amberAccent;
     } else if (widget.title.contains('AI & Machine Learning')) {
-      _wordToFlicker = 'Real-time project';
-      _flickerColor = Colors.white;
+      _wordToFlicker = 'Hands-on GenAI';
+      _flickerColor = Colors.cyanAccent;
     } else if (widget.title.contains('Quality Assurance')) {
-      _wordToFlicker = 'Advanced QA';
-      _flickerColor = Colors.white;
+      _wordToFlicker = 'QA automation';
+      _flickerColor = Colors.greenAccent;
     } else {
       _wordToFlicker = '';
     }
@@ -268,8 +282,8 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
     );
 
     _colorAnimation = ColorTween(
-      begin: Colors.green,
-      end: Colors.white,
+      begin: const Color(0xFF0A1628),
+      end: const Color(0xFF00897B),
     ).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -294,18 +308,33 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(ResponsiveHelper.getResponsiveFontSize(context, 16)),
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: MediaQuery.of(context).size.width * 0.9, // Adjusted for mobile
+      padding: EdgeInsets.all(ResponsiveHelper.getResponsiveFontSize(context, 18)),
+      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.black.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(18),
+        gradient: LinearGradient(
+          colors: [
+            Colors.black.withOpacity(0.82),
+            const Color(0xFF0A1F14).withOpacity(0.88),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: widget.titleColor.withOpacity(0.35),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: Offset(0, 5),
+            color: widget.titleColor.withOpacity(0.12),
+            blurRadius: 16,
+            spreadRadius: 1,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -315,9 +344,10 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
           Text(
             widget.title,
             style: TextStyle(
-              fontSize: ResponsiveHelper.getResponsiveFontSize(context, 20),
+              fontSize: ResponsiveHelper.getResponsiveFontSize(context, 18),
               fontWeight: FontWeight.bold,
               color: widget.titleColor,
+              letterSpacing: 0.3,
             ),
           ),
           SizedBox(height: 10),
@@ -341,35 +371,36 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
                       );
                     },
                     child: Text(
-                      "BOOK NOW",
+                      "CONNECT",
                       style: TextStyle(
-                        fontSize: ResponsiveHelper.getResponsiveFontSize(context, 18),
+                        fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
                         fontWeight: FontWeight.bold,
-                        color: Colors.purple,
+                        color: Colors.white,
+                        letterSpacing: 2.5,
                         shadows: [
                           Shadow(
-                            color: Colors.purple.withOpacity(0.5),
-                            blurRadius: 3,
-                            offset: Offset(1, 1),
+                            color: const Color(0xFF64FFDA).withOpacity(0.8),
+                            blurRadius: 8,
+                            offset: Offset(0, 0),
                           ),
                         ],
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(
-                        ResponsiveHelper.getResponsiveImageSize(context, 150),
-                        ResponsiveHelper.getResponsiveImageSize(context, 40),
+                        ResponsiveHelper.getResponsiveImageSize(context, 140),
+                        ResponsiveHelper.getResponsiveImageSize(context, 44),
                       ),
                       backgroundColor: _colorAnimation.value,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(30),
                         side: BorderSide(
-                          color: Colors.white,
-                          width: 2,
+                          color: const Color(0xFF64FFDA),
+                          width: 1.5,
                         ),
                       ),
-                      elevation: 8,
-                      shadowColor: Colors.greenAccent.withOpacity(0.7),
+                      elevation: 12,
+                      shadowColor: const Color(0xFF00BFA5).withOpacity(0.6),
                     ),
                   ),
                 );
@@ -393,14 +424,14 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.only(top: 3),
                   child: Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
+                    Icons.check_circle_rounded,
+                    color: _flickerColor,
                     size: ResponsiveHelper.getResponsiveFontSize(context, 16),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: _buildFlickeringText(line),
                 ),
@@ -414,20 +445,21 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.only(top: 3),
                   child: Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
+                    Icons.check_circle_rounded,
+                    color: _flickerColor.withOpacity(0.7),
                     size: ResponsiveHelper.getResponsiveFontSize(context, 16),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     line.trim(),
                     style: TextStyle(
-                      fontSize: ResponsiveHelper.getResponsiveFontSize(context, 14),
-                      color: Colors.white,
+                      fontSize: ResponsiveHelper.getResponsiveFontSize(context, 15),
+                      color: Colors.white.withOpacity(0.92),
+                      height: 1.4,
                     ),
                   ),
                 ),
@@ -465,7 +497,7 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
                       blurRadius: 20 * _flickerAnimation.value,
                     ),
                   ],
-                  backgroundColor: Colors.purple.withOpacity(0.3 * _flickerAnimation.value),
+                  backgroundColor: _flickerColor.withOpacity(0.15 * _flickerAnimation.value),
                 ),
               ),
               if (parts.length > 1) TextSpan(text: parts[1]),
