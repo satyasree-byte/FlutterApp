@@ -39,7 +39,7 @@ class TabletContact extends StatelessWidget {
               Expanded(
                 child: ContactInfoCard(
                   name: 'ADMIN',
-                  phone: '+91 8050003203',
+                  phone: '+91 9743997135',
                   email: 'consulting@eduvise.ai',
                 ),
               ),

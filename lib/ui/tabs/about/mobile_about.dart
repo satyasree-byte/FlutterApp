@@ -13,17 +13,16 @@ class MobileAbout extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
+        width: double.infinity,
         padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 120,
+          top: MediaQuery.of(context).padding.top + 80,
           left: 16,
           right: 16,
           bottom: 40,
         ),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-            Colors.green,
-             Colors.pink],
+            colors: [Colors.green, Colors.pink],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -50,8 +49,12 @@ class MobileAbout extends StatelessWidget {
               ),
             ),
             Column(
-              children: founders.map((founder) => FounderCard(founder: founder))
-                  .toList(),
+              children: founders.map((founder) => FounderCard(
+                founder: founder,
+                isDesktop: false,
+                isTablet: false,
+                isMobile: true,
+              )).toList(),
             ),
           ],
         ),

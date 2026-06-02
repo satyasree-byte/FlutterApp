@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'tabs/career_guidance_tab.dart';
-import 'tabs/knowledge_centre_tab.dart';
 import '../data/tabs_layout.dart';
 import 'tabs/customTabBar/mobile_tab_bar.dart';
 import 'tabs/customTabBar/tablet_tab_bar.dart';
 import 'tabs/customTabBar/desktop_tab_bar.dart';
-import 'tabs/about/founder_card.dart';
-import '../constants.dart';
 import 'widgets/ResponsiveCustomTab.dart';
 import 'tabs/responsiveHome.dart';
 import 'tabs/responsiveContactUs.dart';
-import 'tabs/responsiveAbout.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -26,7 +21,6 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _tabContents = [
     const responsive_Home(),
-    ResponsiveAbout(founders: defaultFounders),
     const ResponsiveContact(),
   ];
 

@@ -29,7 +29,7 @@ class ContactUsTab extends StatelessWidget {
             SizedBox(height: 20),
             ContactInfoCard(
               name: 'ADMIN',
-              phone: '+91 8050003203',
+              phone: '+91 9743997135',
               email: 'consulting@eduvise.ai',
             ),
             SizedBox(height: 20),
