@@ -16,10 +16,10 @@ class WhatsAppService {
       if (await canLaunch(url)) {
         await launch(url); // Opens WhatsApp with the message
       } else {
-        print('Could not open WhatsApp');
+        // WhatsApp could not be opened
       }
     } catch (e) {
-      print('Error sending message: $e');
+      // ignore: avoid_print
     }
   }
 }

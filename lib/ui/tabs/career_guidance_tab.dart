@@ -29,26 +29,31 @@ class _CareerGuidanceTabState extends State<CareerGuidanceTab> {
     "Programming Training": false,
   };
 
-  final List<Map<String, String>> imageQuotes = [
+  final List<Map<String, dynamic>> imageQuotes = [
     {
-      "image": "assets/images/Founder.jpeg",
-      "quote": "Start early and stay ahead in your career!"
+      "quote": "Start early and stay ahead in your career!",
+      "icon": Icons.rocket_launch_rounded,
+      "color": const Color(0xFF7C3AED),
     },
     {
-      "image": "assets/images/Founder2.jpeg",
-      "quote": "Focus on building real skills that matter."
+      "quote": "Focus on building real skills that matter.",
+      "icon": Icons.psychology_rounded,
+      "color": const Color(0xFF0EA5E9),
     },
     {
-      "image": "assets/images/Founder.jpeg",
-      "quote": "Your portfolio is your resume, make it strong."
+      "quote": "Your portfolio is your resume — make it strong.",
+      "icon": Icons.work_outline_rounded,
+      "color": const Color(0xFF10B981),
     },
     {
-      "image": "assets/images/Founder2.jpeg",
-      "quote": "Never stop learning, the industry evolves fast."
+      "quote": "Never stop learning. The industry evolves fast.",
+      "icon": Icons.auto_stories_rounded,
+      "color": const Color(0xFFF59E0B),
     },
     {
-      "image": "assets/images/Founder.jpeg",
-      "quote": "Networking is the key to opportunities."
+      "quote": "Networking is the key to opportunities.",
+      "icon": Icons.people_rounded,
+      "color": const Color(0xFFEC4899),
     },
   ];
 
@@ -333,89 +338,58 @@ class _CareerGuidanceTabState extends State<CareerGuidanceTab> {
               padding: const EdgeInsets.only(top: 1).add(EdgeInsets.symmetric(horizontal: 10)),
               child: Row(
                 children: [
-                  // Transitioning Image & Quote Section (left-aligned)
+                  // Transitioning Quote Panel (no photos)
                   Expanded(
                     flex: 1,
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 800),
                       child: ClipRRect(
                         key: ValueKey<int>(_currentIndex),
-                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                        child: Stack(
-                          children: [
-                            // Transitioning image
-                            Image.asset(
-                              imageQuotes[_currentIndex]["image"]!,
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              height: MediaQuery.of(context).size.height * 0.80,
-                              fit: BoxFit.cover,
+                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(15)),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.45,
+                          height: MediaQuery.of(context).size.height * 0.80,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                (imageQuotes[_currentIndex]["color"] as Color).withOpacity(0.18),
+                                Colors.black87,
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
                             ),
-
-                            // Vignette Overlay
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              height: MediaQuery.of(context).size.height * 0.80,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                gradient: RadialGradient(
-                                  center: Alignment.bottomCenter,
-                                  radius: 1.0,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withOpacity(0.9),
-                                  ],
-                                ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                imageQuotes[_currentIndex]["icon"] as IconData,
+                                color: imageQuotes[_currentIndex]["color"] as Color,
+                                size: 80,
                               ),
-                            ),
-
-                            // Quote positioned on the dark vignette area
-                            Positioned(
-                              bottom: 30,
-                              left: 20,
-                              right: 20,
-                              child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 800),
-                                child: RichText(
+                              const SizedBox(height: 32),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 32),
+                                child: Text(
+                                  '“${imageQuotes[_currentIndex]["quote"]}”',
                                   textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "“", // Stylish opening quote
-                                        style: TextStyle(
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white.withOpacity(0.7),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: imageQuotes[_currentIndex]["quote"]!,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          shadows: [
-                                            Shadow(
-                                              blurRadius: 15.0,
-                                              color: Colors.black.withOpacity(0.6), // Runtime color
-                                              offset: Offset(3.0, 3.0),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "”", // Stylish closing quote
-                                        style: TextStyle(
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white.withOpacity(0.7),
-                                        ),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    height: 1.5,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 15.0,
+                                        color: Colors.black.withOpacity(0.6),
+                                        offset: const Offset(3.0, 3.0),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

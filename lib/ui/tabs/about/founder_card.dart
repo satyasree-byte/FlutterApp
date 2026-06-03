@@ -1,51 +1,33 @@
-// lib/ui/tabs/about/founder_card.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../constants.dart';
 
 class Founder {
-  final String name;
   final String role;
-  final String imageUrl;
-  final String linkedinUrl;
   final String bio;
+  final IconData icon;
+  final Color color;
 
   const Founder({
-    required this.name,
     required this.role,
-    required this.imageUrl,
-    required this.linkedinUrl,
     required this.bio,
+    this.icon = Icons.person_rounded,
+    this.color = const Color(0xFF7C3AED),
   });
 }
 
-final List<Founder> defaultFounders = [
-  Founder(
-    name: "Akash Kumar",
-    role: "Mentor",
-    imageUrl: "assets/images/Founder.jpeg",
-    linkedinUrl: "https://www.linkedin.com/in/akash-kumar-silicon/",
-    bio: "AI Engineer with 11+ years of experience in software engineering, AI, and quality assurance.",
-  ),
-  Founder(
-    name: "Satya sree",
-    role: "Mentor",
-    imageUrl: "assets/images/Founder2.jpeg",
-    linkedinUrl: "https://www.linkedin.com/in/satyasree-annapragada/",
-    bio: "Tech enthusiast with expertise in cloud computing, cybersecurity, and scalable architectures.",
-  ),
-];
+// TODO: populate when mentor profiles are ready to publish
+final List<Founder> defaultFounders = [];
 
 class FounderCard extends StatefulWidget {
   final Founder founder;
   final bool isDesktop;
   final bool isTablet;
   final bool isMobile;
-  
+
   const FounderCard({
-    Key? key, 
+    Key? key,
     required this.founder,
     this.isDesktop = true,
     this.isTablet = true,
@@ -63,7 +45,8 @@ class _FounderCardState extends State<FounderCard> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < ScreenSize.tablet;
-    
+    final f = widget.founder;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -77,16 +60,20 @@ class _FounderCardState extends State<FounderCard> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: _isHovered 
-                ? [Colors.blueAccent.withOpacity(0.7), Colors.blueAccent.withOpacity(0.3)]
+            colors: _isHovered
+                ? [f.color.withOpacity(0.3), f.color.withOpacity(0.1)]
                 : [Colors.blueGrey[900]!, Colors.blueGrey[800]!],
+          ),
+          border: Border.all(
+            color: _isHovered ? f.color.withOpacity(0.6) : Colors.white.withOpacity(0.06),
+            width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(_isHovered ? 0.6 : 0.3),
               blurRadius: _isHovered ? 20 : 10,
               spreadRadius: _isHovered ? 2 : 1,
-            )
+            ),
           ],
         ),
         child: Column(
@@ -94,66 +81,40 @@ class _FounderCardState extends State<FounderCard> {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: _isHovered ? 130 : 110,
-              height: _isHovered ? 130 : 110,
+              width: _isHovered ? 120 : 100,
+              height: _isHovered ? 120 : 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                color: f.color.withOpacity(0.15),
                 border: Border.all(
-                  color: _isHovered ? Colors.white : Colors.grey[800]!,
-                  width: _isHovered ? 4 : 2,
-                ),
-                image: DecorationImage(
-                  image: AssetImage(widget.founder.imageUrl),
-                  fit: BoxFit.cover,
+                  color: _isHovered ? f.color : Colors.grey[800]!,
+                  width: _isHovered ? 3 : 2,
                 ),
               ),
+              child: Icon(f.icon, color: f.color, size: _isHovered ? 54 : 46),
             ),
             const SizedBox(height: 20),
             Text(
-              widget.founder.name,
+              f.role,
               style: GoogleFonts.poppins(
-                fontSize: widget.isDesktop ? 24 : isMobile ? 18 : 20,
+                fontSize: widget.isDesktop ? 20 : isMobile ? 16 : 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              widget.founder.role,
-              style: GoogleFonts.poppins(
-                fontSize: widget.isDesktop ? 18 : isMobile ? 14 : 16,
-                color: Colors.grey[300],
-              ),
-            ),
-            const SizedBox(height: 15),
-            Text(
-              widget.founder.bio,
-              style: GoogleFonts.poppins(
-                fontSize: widget.isDesktop ? 16 : isMobile ? 12 : 14,
-                color: Colors.grey[400],
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 15),
-            IconButton(
-              icon: FaIcon(
-                FontAwesomeIcons.linkedin,
-                color: _isHovered ? Colors.blueAccent : Colors.grey[400],
-                size: widget.isDesktop ? 32 : 28,
+            Text(
+              f.bio,
+              style: GoogleFonts.poppins(
+                fontSize: widget.isDesktop ? 14 : isMobile ? 12 : 13,
+                color: Colors.grey[400],
               ),
-              onPressed: () => _launchURL(widget.founder.linkedinUrl),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _launchURL(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw "Could not launch $url";
-    }
   }
 }

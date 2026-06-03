@@ -71,9 +71,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/images/  # Only this line needed for images
-    - assets/fonts/FearRobot-Regular.ttf  # Keep individual font declaration
-   
+    - assets/images/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -5,6 +5,7 @@ import 'tabs/customTabBar/tablet_tab_bar.dart';
 import 'tabs/customTabBar/desktop_tab_bar.dart';
 import 'widgets/ResponsiveCustomTab.dart';
 import 'tabs/responsiveHome.dart';
+import 'tabs/responsiveAbout.dart';
 import 'tabs/responsiveContactUs.dart';
 
 class MainPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _tabContents = [
     const responsive_Home(),
+    const ResponsiveAbout(),
     const ResponsiveContact(),
   ];
 

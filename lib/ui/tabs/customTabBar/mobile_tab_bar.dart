@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../widgets/language_toggle.dart';
 
 class MobileTabBar extends StatefulWidget {
   final List<String> tabs;
@@ -107,6 +108,8 @@ class _MobileTabBarState extends State<MobileTabBar>
               ),
             ),
           ),
+          const LanguageToggle(),
+          const SizedBox(width: 4),
           IconButton(
             icon: const Icon(Icons.menu, color: Colors.white),
             onPressed: widget.toggleMenu,

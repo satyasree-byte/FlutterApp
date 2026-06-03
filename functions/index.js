@@ -14,6 +14,34 @@ const db = getFirestore();
 const emailUser = defineSecret('EMAIL_USER');
 const emailPass = defineSecret('EMAIL_PASS');
 
+const ALLOWED_ORIGIN = 'https://eduvise.ai';
+
+function setCors(req, res) {
+  const origin = req.headers.origin;
+  if (origin === ALLOWED_ORIGIN || origin === 'https://www.eduvise.ai') {
+    res.set('Access-Control-Allow-Origin', origin);
+  }
+  res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+// Simple in-memory rate limiter — max 5 requests per IP per minute
+const rateLimitMap = new Map();
+function isRateLimited(ip) {
+  const now = Date.now();
+  const windowMs = 60 * 1000;
+  const max = 5;
+  const entry = rateLimitMap.get(ip) || { count: 0, start: now };
+  if (now - entry.start > windowMs) {
+    rateLimitMap.set(ip, { count: 1, start: now });
+    return false;
+  }
+  if (entry.count >= max) return true;
+  entry.count++;
+  rateLimitMap.set(ip, entry);
+  return false;
+}
+
 // ========== 1. SAVE BOOKING TO FIRESTORE ==========
 export const saveBooking = onRequest(
   {
@@ -22,10 +50,7 @@ export const saveBooking = onRequest(
     region: 'us-central1'
   },
   async (req, res) => {
-    // ✅ CORS HEADERS
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    setCors(req, res);
     
     // ✅ HANDLE PREFLIGHT
     if (req.method === 'OPTIONS') {
@@ -35,7 +60,12 @@ export const saveBooking = onRequest(
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
     }
-    
+
+    const ip = req.headers['x-forwarded-for'] || req.ip || 'unknown';
+    if (isRateLimited(ip)) {
+      return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+    }
+
     try {
       const {
         name,
@@ -251,10 +281,7 @@ export const getBooking = onRequest(
     region: 'us-central1'
   },
   async (req, res) => {
-    // ✅ CORS HEADERS
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    setCors(req, res);
     
     if (req.method === 'OPTIONS') {
       return res.status(200).send('');
@@ -273,13 +300,20 @@ export const getBooking = onRequest(
         return res.status(404).json({ error: 'Booking not found' });
       }
 
+      const data = doc.data();
       return res.status(200).json({
         success: true,
-        booking: doc.data()
+        booking: {
+          id: data.id,
+          status: data.status,
+          userType: data.userType,
+          bookingMethod: data.bookingMethod,
+          createdAt: data.createdAt,
+        }
       });
 
     } catch (error) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 );

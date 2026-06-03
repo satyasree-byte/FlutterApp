@@ -1,29 +1,22 @@
-// lib/ui/tabs/responsiveAbout.dart
 import 'package:flutter/material.dart';
-import 'about/mobile_about.dart';
-import 'about/tablet_about.dart';
-import 'about/desktop_about.dart';
+import 'about/mobile_why_choose_us.dart';
+import 'about/tablet_why_choose_us.dart';
+import 'about/desktop_why_choose_us.dart';
 import '../../constants.dart';
-import 'about/founder_card.dart';
 
 class ResponsiveAbout extends StatelessWidget {
-  final List<Founder> founders;
-
-  const ResponsiveAbout({
-    Key? key,
-    required this.founders,
-  }) : super(key: key);
+  const ResponsiveAbout({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth >= ScreenSize.desktop) {
-          return DesktopAbout(founders: founders);
+          return const DesktopWhyChooseUs();
         } else if (constraints.maxWidth >= ScreenSize.tablet) {
-          return TabletAbout(founders: founders);
+          return const TabletWhyChooseUs();
         } else {
-          return MobileAbout(founders: founders);
+          return const MobileWhyChooseUs();
         }
       },
     );

@@ -70,7 +70,7 @@ class Header extends StatelessWidget {
           GestureDetector(
             onTap: () {
               // Action for Login/Sign Up
-              print('Login / Sign Up clicked');
+              // Login / Sign Up — coming soon
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
@@ -105,7 +105,7 @@ class Header extends StatelessWidget {
   Widget _navLink(String label) {
     return GestureDetector(
       onTap: () {
-        print('$label clicked');
+        // nav tap: $label
         // Navigation logic goes here (e.g., Navigator.push)
       },
       child: MouseRegion(

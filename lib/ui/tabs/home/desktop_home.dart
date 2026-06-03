@@ -1,378 +1,185 @@
-// desktop_home.dart
 import 'package:flutter/material.dart';
-import '../services/bookServiceForm.dart';
-import '../../utils/responsive_helper.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'home_services_data.dart';
+import 'home_shared_widgets.dart';
+import '../../../data/language_notifier.dart';
 
-class DesktopHome extends StatelessWidget {
-  final TabController tabController;
-  final Function(int) scrollToIndex;
-  final List<GlobalKey> serviceKeys;
+class DesktopHome extends StatefulWidget {
+  const DesktopHome({Key? key}) : super(key: key);
 
-  DesktopHome({
-    required this.tabController,
-    required this.scrollToIndex,
-    required this.serviceKeys,
-  });
+  @override
+  State<DesktopHome> createState() => _DesktopHomeState();
+}
+
+class _DesktopHomeState extends State<DesktopHome> with TickerProviderStateMixin {
+  int _selected = 0;
+  late AnimationController _heroCtrl;
+  late Animation<double> _heroFade;
+  late Animation<Offset> _heroSlide;
+  late AnimationController _contentCtrl;
+  late Animation<double> _contentFade;
+  late Animation<Offset> _contentSlide;
+
+  @override
+  void initState() {
+    super.initState();
+    _heroCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _heroFade = CurvedAnimation(parent: _heroCtrl, curve: Curves.easeOut);
+    _heroSlide = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _heroCtrl, curve: Curves.easeOut));
+    _heroCtrl.forward();
+
+    _contentCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 450));
+    _contentFade = CurvedAnimation(parent: _contentCtrl, curve: Curves.easeOut);
+    _contentSlide = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _contentCtrl, curve: Curves.easeOut));
+    _contentCtrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _heroCtrl.dispose();
+    _contentCtrl.dispose();
+    super.dispose();
+  }
+
+  void _selectService(int i) {
+    if (i == _selected) return;
+    setState(() => _selected = i);
+    _contentCtrl.forward(from: 0);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final h = MediaQuery.of(context).size.height;
+    final service = homeServices[_selected];
+
     return SingleChildScrollView(
-      padding: ResponsiveHelper.getResponsivePadding(context),
       child: Column(
         children: [
-          HeroSection(),
-          Container(
-            color: Colors.black.withOpacity(0.7),
-            height: MediaQuery.of(context).size.height * 0.1,
-            child: TabBar(
-              controller: tabController,
-              indicatorColor: Colors.white,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white,
-              labelStyle: TextStyle(
-                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 20),
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedLabelStyle: TextStyle(
-                fontSize: ResponsiveHelper.getResponsiveFontSize(context, 18),
-                fontWeight: FontWeight.normal,
-              ),
-              isScrollable: true,
-              tabs: [
-                Tab(text: 'High School Pathway Guidance'),
-                Tab(text: 'University & College Advisory'),
-                Tab(text: 'AI & Machine Learning Career Roadmap'),
-                Tab(text: 'Quality Assurance Career Coaching'),
-              ],
-              onTap: (index) => scrollToIndex(index),
-            ),
-          ),
-          Column(
-            children: [
-              _buildZigZagCard(
-                'High School Pathway Guidance (Grades 8-12)',
-                """
-                How to use Artificial Intetelligence (AI) to improve your grades.
-                Personalized help to choose the best career path after school.
-                One-on-one programming lessons tailored to your child's needs.
-                Clear explanations of tough topics in the syllabus.
-                Quick doubt-solving to keep your child on track.
-                Exam preparation plans to help your child do well.
-                """,
-                true,
-                Colors.purple,
-                key: serviceKeys[0],
-              ),
-              _buildZigZagCard(
-                'University & College Advisory',
-                """
-                Personalized resume building.
-                College project reviews to help land IT jobs.
-                Mock interviews for freshers.
-                Communication skills and presentation skills coaching.
-                """,
-                true,
-                Colors.purple,
-                key: serviceKeys[1],
-              ),
-              _buildZigZagCard(
-                'AI & Machine Learning Career Roadmap',
-                """Real-time project discussions to gain industry experience.
-                Personalized resume review.
-                Mock interviews to build confidence.
-                Discussions on the latest tools and technologies in Data Science and Gen AI.
-                """,
-                false,
-                Colors.purple,
-                key: serviceKeys[2],
-              ),
-              _buildZigZagCard(
-                'Quality Assurance Career Coaching',
-                """Advanced QA tools from scratch.
-                Personalized resume reviews.
-                Technologies to consider in QA.
-                Mock interview coaching.
-                Real-time project discussions in QA.
-                """,
-                false,
-                Colors.purple,
-                key: serviceKeys[3],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildZigZagCard(String title, String content, bool isLeftAligned, Color titleColor, {Key? key}) {
-    return Padding(
-      key: key,
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: isLeftAligned ? MainAxisAlignment.start : MainAxisAlignment.end,
-        children: [
-          if (isLeftAligned) ...[
-            Expanded(
-              child: ServiceCard(
-                title: title,
-                content: content,
-                isLeftAligned: isLeftAligned,
-                titleColor: titleColor,
-              ),
-            ),
-            SizedBox(width: 16),
-          ] else ...[
-            SizedBox(width: 16),
-            Expanded(
-              child: ServiceCard(
-                title: title,
-                content: content,
-                isLeftAligned: isLeftAligned,
-                titleColor: titleColor,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class HeroSection extends StatefulWidget {
-  @override
-  _HeroSectionState createState() => _HeroSectionState();
-}
-
-class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 4),
-      vsync: this,
-    );
-    _animation = Tween<Offset>(
-      begin: Offset(0, 1),
-      end: Offset(0, 0.2),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: ResponsiveHelper.getResponsiveImageSize(context, 250),
-      child: AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) {
-          return Transform.translate(
-            offset: _animation.value * 250,
-            child: Center(
-              child: Text(
-                'Shape Your Future with Expert Guidance',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: ResponsiveHelper.getResponsiveFontSize(context, 32),
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  backgroundColor: Colors.black.withOpacity(0.1),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ServiceCard extends StatefulWidget {
-  final String title;
-  final String content;
-  final bool isLeftAligned;
-  final Color titleColor;
-
-  const ServiceCard({
-    required this.title,
-    required this.content,
-    required this.isLeftAligned,
-    required this.titleColor,
-  });
-
-  @override
-  _ServiceCardState createState() => _ServiceCardState();
-}
-
-class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _rotateAnimation;
-  late Animation<Color?> _colorAnimation;
-  late Animation<double> _flickerAnimation;
-  
-  late String _wordToFlicker;
-  late Color _flickerColor;
-
-  @override
-  void initState() {
-    super.initState();
-    
-    // Determine which word to flicker based on the card title
-    if (widget.title.contains('High School')) {
-      _wordToFlicker = 'Artificial Intetelligence (AI)';
-      _flickerColor = Colors.white;
-    } else if (widget.title.contains('University')) {
-      _wordToFlicker = 'Personalized';
-      _flickerColor = Colors.white;
-    } else if (widget.title.contains('AI & Machine Learning')) {
-      _wordToFlicker = 'Real-time project';
-      _flickerColor = Colors.white;
-    } else if (widget.title.contains('Quality Assurance')) {
-      _wordToFlicker = 'Advanced QA';
-      _flickerColor = Colors.white;
-    } else {
-      _wordToFlicker = '';
-    }
-    
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat(reverse: true);
-    
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 0.95).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    _rotateAnimation = Tween<double>(begin: -0.001, end: 0.001).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-//book now flickering button
-    _colorAnimation = ColorTween(
-      begin: Colors.green,
-      end: Colors.white,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-    
-    _flickerAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(ResponsiveHelper.getResponsiveFontSize(context, 16)),
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: MediaQuery.of(context).size.width * 0.45,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.black.withOpacity(0.7),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: ResponsiveHelper.getResponsiveFontSize(context, 24),
-              fontWeight: FontWeight.bold,
-              color: widget.titleColor,
-            ),
-          ),
-          SizedBox(height: 10),
-          _buildBulletPoints(context, widget.content),
-          SizedBox(height: 20),
-          Align(
-            alignment: Alignment.centerRight,
-            child: AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return Transform(
-                  transform: Matrix4.identity()
-                    ..scale(_scaleAnimation.value)
-                    ..rotateZ(_rotateAnimation.value),
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BookingForm()),
-                      );
-                    },
-                    child: Text(
-                      "BOOK NOW",
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.getResponsiveFontSize(context, 25),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.purple,
-                        shadows: [
-                          Shadow(
-                            color: Colors.purple.withOpacity(0.5),
-                            blurRadius: 3,
-                            offset: Offset(1, 1),
+          // ── Hero ──────────────────────────────────────────────
+          ClipRect(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 72),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(top: -60, left: -80, child: _glowOrb(320, const Color(0xFF6C3AED))),
+                  Positioned(bottom: -40, right: -60, child: _glowOrb(280, const Color(0xFF0EA5E9))),
+                  FadeTransition(
+                    opacity: _heroFade,
+                    child: SlideTransition(
+                      position: _heroSlide,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _urgencyBadge(),
+                            const SizedBox(height: 24),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: isHinglish,
+                            builder: (_, hi, __) => Column(
+                              children: [
+                                Text(
+                                  hi
+                                      ? 'Career Guidance & AI Skills\nसही Experts से सीखो'
+                                      : 'Expert Career Guidance\n& Real AI Skills — Online',
+                                  textAlign: TextAlign.center,
+                                  style: hi
+                                      ? GoogleFonts.hindMadurai(
+                                          fontSize: 52,
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.white,
+                                          height: 1.12,
+                                        )
+                                      : GoogleFonts.poppins(
+                                          fontSize: 52,
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.white,
+                                          height: 1.12,
+                                        ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  hi
+                                      ? 'उन लोगों से बात करो जो यह कर चुके हैं. AI tools सीखो जो actually काम आते हैं.'
+                                      : 'Talk to professionals who have done it. Learn AI tools that actually work.\nFor students, freshers, and working professionals.',
+                                  textAlign: TextAlign.center,
+                                  style: hi
+                                      ? GoogleFonts.hindMadurai(color: Colors.white54, fontSize: 17)
+                                      : GoogleFonts.poppins(color: Colors.white54, fontSize: 17),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(
-                        ResponsiveHelper.getResponsiveImageSize(context, 180),
-                        ResponsiveHelper.getResponsiveImageSize(context, 50),
-                      ),
-                      backgroundColor: _colorAnimation.value,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                          color: Colors.white,
-                          width: 2,
+                  ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ── Services section ──────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(80, 0, 80, 80),
+            child: Column(
+              children: [
+                _sectionHeading('Our', 'Services'),
+                const SizedBox(height: 36),
+
+                // ── 4 service tiles ───────────────────────────
+                Row(
+                  children: List.generate(homeServices.length, (i) {
+                    final s = homeServices[i];
+                    final active = i == _selected;
+                    return Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: i < homeServices.length - 1 ? 18 : 0),
+                        child: ServiceTile(
+                          service: s,
+                          active: active,
+                          onTap: () => _selectService(i),
                         ),
                       ),
-                      elevation: 8,
-                      shadowColor: Colors.greenAccent.withOpacity(0.7),
-                    ),
+                    );
+                  }),
+                ),
+
+                const SizedBox(height: 24),
+
+                // ── Expanded content panel ────────────────────
+                FadeTransition(
+                  opacity: _contentFade,
+                  child: SlideTransition(
+                    position: _contentSlide,
+                    child: ContentPanel(service: service, isDesktop: true),
                   ),
-                );
-              },
+                ),
+
+                // ── Expert Card ───────────────────────────────
+                const SizedBox(height: 72),
+                const ExpertCard(isDesktop: true),
+
+                // ── How It Works ──────────────────────────────
+                const SizedBox(height: 72),
+                const HowItWorksSection(isDesktop: true),
+
+                // ── Free Resources ────────────────────────────
+                const SizedBox(height: 72),
+                const HomeResourcesSection(isDesktop: true),
+
+                // ── AI Tools & Outcomes ───────────────────────
+                const SizedBox(height: 72),
+                const AiToolsSection(isDesktop: true),
+
+                // ── CTA ───────────────────────────────────────
+                const SizedBox(height: 56),
+                const HomeCTABanner(),
+              ],
             ),
           ),
         ],
@@ -380,99 +187,61 @@ class _ServiceCardState extends State<ServiceCard> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildBulletPoints(BuildContext context, String content) {
-    List<String> lines = content.trim().split("\n");
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines.map((line) {
-        if (_wordToFlicker.isNotEmpty && line.contains(_wordToFlicker)) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
-                    size: ResponsiveHelper.getResponsiveFontSize(context, 20),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _buildFlickeringText(line),
-                ),
-              ],
-            ),
-          );
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
-                    size: ResponsiveHelper.getResponsiveFontSize(context, 20),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    line.trim(),
-                    style: TextStyle(
-                      fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-      }).toList(),
-    );
-  }
-  
-//flickering text
-  Widget _buildFlickeringText(String line) {
-    List<String> parts = line.split(_wordToFlicker);
-    
-    return AnimatedBuilder(
-      animation: _flickerAnimation,
-      builder: (context, child) {
-        return RichText(
-          text: TextSpan(
-            style: TextStyle(
-              fontSize: ResponsiveHelper.getResponsiveFontSize(context, 16),
-              color: Colors.white,
-            ),
-            children: [
-              TextSpan(text: parts[0]),
-              TextSpan(
-                text: _wordToFlicker,
-                style: TextStyle(
-                  color: _flickerColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: ResponsiveHelper.getResponsiveFontSize(context, 20),
-                  shadows: [
-                    Shadow(
-                      color: _flickerColor.withOpacity(0.3),
-                      blurRadius: 20 * _flickerAnimation.value,
-                    ),
-                  ],
-                  backgroundColor: Colors.purple.withOpacity(0.3 * _flickerAnimation.value),
-                ),
-              ),
-              if (parts.length > 1) TextSpan(text: parts[1]),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  Widget _urgencyBadge() => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF59E0B).withOpacity(0.12),
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(color: const Color(0xFFF59E0B).withOpacity(0.5)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 7, height: 7,
+                decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle)),
+            const SizedBox(width: 7),
+            Text('Only $weeklySlots booking slots left this week',
+                style: GoogleFonts.poppins(
+                    color: const Color(0xFFF59E0B), fontSize: 12, fontWeight: FontWeight.w600)),
+          ],
+        ),
+      );
+
+
+  Widget _heroBadge(IconData icon, String label, Color color) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: color.withOpacity(0.35)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: 6),
+            Text(label, style: GoogleFonts.poppins(color: Colors.white70, fontSize: 13)),
+          ],
+        ),
+      );
+
+  Widget _sectionHeading(String plain, String accent) => RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: GoogleFonts.poppins(fontSize: 38, fontWeight: FontWeight.w800, color: Colors.white),
+          children: [
+            TextSpan(text: '$plain '),
+            TextSpan(text: accent, style: const TextStyle(color: Colors.amberAccent)),
+          ],
+        ),
+      );
+
+  Widget _glowOrb(double size, Color color) => Container(
+        width: size, height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(colors: [color.withOpacity(0.22), color.withOpacity(0)]),
+        ),
+      );
 }
+

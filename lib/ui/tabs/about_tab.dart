@@ -1,80 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../data/tabs_layout.dart';
 
 class AboutTab extends StatelessWidget {
   final List<Founder> founders = [
     Founder(
-      name: "Akash Dwivedi",
-      role: "Founder & CEO",
-      imageUrl: "assets/images/Founder.jpeg",
-      linkedinUrl: "https://www.linkedin.com/in/akash-kumar-silicon",
-      bio: "AI Engineer with 11+ years of experience in software engineering, AI, and quality assurance.",
+      role: 'Founder & CEO',
+      icon: Icons.person_rounded,
+      color: const Color(0xFF7C3AED),
+      bio: 'AI Engineer with 11+ years of experience in software engineering, AI, and quality assurance.',
     ),
     Founder(
-      name: "John Doe",
-      role: "Co-founder & CTO",
-      imageUrl: "assets/images/Founder2.jpeg",
-      linkedinUrl: "https://www.linkedin.com/in/satyasree-annapragada/",
-      bio: "Tech enthusiast with expertise in cloud computing, cybersecurity, and scalable architectures.",
+      role: 'Co-founder & CTO',
+      icon: Icons.engineering_rounded,
+      color: const Color(0xFF0EA5E9),
+      bio: 'Tech specialist with expertise in cloud computing, cybersecurity, and scalable architectures.',
     ),
-    // Add more founders as needed
   ];
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView( // Make the entire screen scrollable
+    return SingleChildScrollView(
       child: Container(
-        key: ValueKey<int>(3),
+        key: const ValueKey<int>(3),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              tabBackgroundColors[0],
-              tabGradientColors[0],
-            ],
+            colors: [tabBackgroundColors[0], tabGradientColors[0]],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top:10.0).add(EdgeInsets.all(50.0)),
+          padding: const EdgeInsets.only(top: 10.0).add(const EdgeInsets.all(50.0)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 90.0), // Adjust padding as needed
+                padding: const EdgeInsets.only(top: 90.0),
                 child: RichText(
                   text: TextSpan(
-                    style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
-                    children: <TextSpan>[
-                      TextSpan(text: 'Meet Our ', style: TextStyle(color: Colors.white)),
+                    style: GoogleFonts.poppins(
+                        fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                    children: const [
+                      TextSpan(text: 'Meet Our '),
                       TextSpan(
-                        text: 'Founders',
-                        style: TextStyle(color: Colors.blueAccent), // Different color for "Founders"
+                        text: 'Team',
+                        style: TextStyle(color: Colors.blueAccent),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 20), // Adjust space if necessary
-              
+              const SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.only(top: 20.0), // Adjust padding as needed
+                padding: const EdgeInsets.only(top: 20.0),
                 child: GridView.builder(
-                  shrinkWrap: true, // Prevents GridView from expanding and causing overflow
-                  physics: NeverScrollableScrollPhysics(), // Disables scrolling in GridView
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 1, // 3 items per row on large screens, 1 per row on small screens
+                    crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 1,
                     crossAxisSpacing: 20,
                     mainAxisSpacing: 20,
                     childAspectRatio: 0.85,
                   ),
                   itemCount: founders.length,
-                  itemBuilder: (context, index) {
-                    return FounderCard(founder: founders[index]);
-                  },
+                  itemBuilder: (context, index) => FounderCard(founder: founders[index]),
                 ),
               ),
             ],
@@ -86,24 +77,21 @@ class AboutTab extends StatelessWidget {
 }
 
 class Founder {
-  final String name;
   final String role;
-  final String imageUrl;
-  final String linkedinUrl;
+  final IconData icon;
+  final Color color;
   final String bio;
 
   Founder({
-    required this.name,
     required this.role,
-    required this.imageUrl,
-    required this.linkedinUrl,
+    required this.icon,
+    required this.color,
     required this.bio,
   });
 }
 
 class FounderCard extends StatefulWidget {
   final Founder founder;
-
   const FounderCard({Key? key, required this.founder}) : super(key: key);
 
   @override
@@ -115,71 +103,61 @@ class _FounderCardState extends State<FounderCard> {
 
   @override
   Widget build(BuildContext context) {
+    final f = widget.founder;
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             colors: isHovered
-                ? [Colors.deepPurpleAccent, Colors.blueAccent]
+                ? [f.color.withOpacity(0.3), f.color.withOpacity(0.1)]
                 : [Colors.black54, Colors.black87],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
+          border: Border.all(
+            color: isHovered ? f.color.withOpacity(0.6) : Colors.white.withOpacity(0.08),
+            width: 1.5,
+          ),
           boxShadow: isHovered
-              ? [BoxShadow(color: Colors.blueAccent.withOpacity(0.6), blurRadius: 15)]
-              : [BoxShadow(color: Colors.black45, blurRadius: 8)],
+              ? [BoxShadow(color: f.color.withOpacity(0.4), blurRadius: 20)]
+              : [const BoxShadow(color: Colors.black45, blurRadius: 8)],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-           Hero(
-              tag: widget.founder.imageUrl,
-              child: CircleAvatar(
-                radius: isHovered ? 80 : 70, // Increase size more on hover (default 60)
-                backgroundImage: AssetImage(widget.founder.imageUrl),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: isHovered ? 100 : 88,
+              height: isHovered ? 100 : 88,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: f.color.withOpacity(0.18),
+                border: Border.all(color: f.color.withOpacity(0.5), width: 2),
               ),
+              child: Icon(f.icon, color: f.color, size: isHovered ? 48 : 42),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 16),
             Text(
-              widget.founder.name,
-              style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            Text(
-              widget.founder.role,
-              style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[300]),
-            ),
-            SizedBox(height: 10),
-            Text(
-              widget.founder.bio,
-              style: TextStyle(fontSize: 12, color: Colors.grey[400], fontStyle: FontStyle.italic),
+              f.role,
+              style: GoogleFonts.poppins(
+                  fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => _launchURL(widget.founder.linkedinUrl),
-              child: FaIcon(
-                FontAwesomeIcons.linkedin,
-                color: Colors.blue[300],
-                size: 30,
-              ),
+            const SizedBox(height: 10),
+            Text(
+              f.bio,
+              style: TextStyle(fontSize: 12, color: Colors.grey[400], fontStyle: FontStyle.italic),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw "Could not launch $url";
-    }
   }
 }

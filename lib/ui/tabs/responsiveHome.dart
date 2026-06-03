@@ -1,87 +1,98 @@
 import 'package:flutter/material.dart';
-import 'services/bookServiceForm.dart';
-import '../utils/responsive_helper.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'home/mobile_home.dart';
 import 'home/tablet_home.dart';
 import 'home/desktop_home.dart';
+import 'services/bookServiceForm.dart';
 
-class responsive_Home extends StatefulWidget {
+class responsive_Home extends StatelessWidget {
   const responsive_Home({Key? key}) : super(key: key);
 
   @override
-  _ResponsiveHomeTabState createState() => _ResponsiveHomeTabState();
-}
-
-class _ResponsiveHomeTabState extends State<responsive_Home> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
-  final List<GlobalKey> _serviceKeys = [
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-    GlobalKey(),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToIndex(int index) {
-    Scrollable.ensureVisible(
-      _serviceKeys[index].currentContext!,
-      duration: Duration(seconds: 2),
-      curve: Curves.easeOut,
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // Determine the layout based on screen size
-    Widget body;
-    if (screenWidth < 500) {
-      // Mobile layout
-      body = MobileHome(
-        tabController: _tabController,
-        scrollToIndex: _scrollToIndex,
-        serviceKeys: _serviceKeys,
-      );
-    } else if (screenWidth < 800) {
-      // Tablet layout
-      body = TabletHome(
-        tabController: _tabController,
-        scrollToIndex: _scrollToIndex,
-        serviceKeys: _serviceKeys,
-      );
-    } else {
-      // Desktop layout
-      body = DesktopHome(
-        tabController: _tabController,
-        scrollToIndex: _scrollToIndex,
-        serviceKeys: _serviceKeys,
-      );
-    }
+    final w = MediaQuery.of(context).size.width;
+    final isMobile = w < 700;
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/tech.jpg'), // Background image
-            fit: BoxFit.cover,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF060818), Color(0xFF0D1B2A), Color(0xFF0A0F1E)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
-        child: body, // Use the responsive body
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth >= 1100) {
+              return const DesktopHome();
+            } else if (constraints.maxWidth >= 700) {
+              return const TabletHome();
+            } else {
+              return const MobileHome();
+            }
+          },
+        ),
       ),
+
+      // ── Sticky bottom CTA — mobile only ──────────────────────
+      bottomNavigationBar: isMobile
+          ? Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF060818).withOpacity(0.95),
+                border: Border(
+                  top: BorderSide(color: const Color(0xFF7C3AED).withOpacity(0.3), width: 1),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(
+                16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+              child: SizedBox(
+                height: 52,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF7C3AED), Color(0xFF0EA5E9)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF7C3AED).withOpacity(0.4),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => BookingForm()),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Book a Free Session',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : null,
     );
   }
 }

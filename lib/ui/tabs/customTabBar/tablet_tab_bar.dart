@@ -1,8 +1,8 @@
 // tablet_tab_bar.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/material.dart';
-import '../../../constants.dart'; // Adjust import path
+import '../../../constants.dart';
+import '../../widgets/language_toggle.dart';
 
 class TabletTabBar extends StatefulWidget {
   final List<String> tabs;
@@ -160,6 +160,8 @@ class _TabletTabBarState extends State<TabletTabBar> {
               ),
             ),
           ),
+          const SizedBox(width: 12),
+          const LanguageToggle(),
         ],
       ),
     );

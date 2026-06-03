@@ -3,9 +3,9 @@
     "short_name": "EDUVISE",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "Our educational advice project.",
+    "background_color": "#060818",
+    "theme_color": "#7C3AED",
+    "description": "Online career guidance and AI skills coaching for students, freshers and professionals across India.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
